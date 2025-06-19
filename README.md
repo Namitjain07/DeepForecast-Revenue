@@ -1,4 +1,4 @@
-# Revenue-Management
+# DeepForecast-Revenue
 
 This notebook (model_train_classification_4_files.ipynb) demonstrates a comprehensive time series forecasting and analysis pipeline for hotel room revenue. It covers classical ARIMA/SARIMAX models, automated parameter selection, exogenous variable extensions, machine learning regressors, neural networks (LSTM/GRU with attention), ensemble approaches, and advanced decomposition methods.
 
