@@ -6,6 +6,13 @@
 
 ---
 
+
+## 🧑‍🏫 Supervision
+
+This project is carried out under the guidance of **Dr. Arjun Ray**.
+
+---
+
 ## 🎥 Live Demo & Visualizations
 
 📺 **Watch it in action**  
