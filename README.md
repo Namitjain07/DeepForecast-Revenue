@@ -13,12 +13,6 @@ This project is carried out under the guidance of **Dr. Arjun Ray**.
 
 ---
 
-## 🎥 Live Demo & Visualizations
-
-📺 **Watch it in action**  
-[![DeepForecast Demo](https://img.youtube.com/vi/your-video-id-here/0.jpg)](https://www.youtube.com/watch?v=your-video-id-here)  
-*Click to play demo video (real-time predictions + UI walkthrough)*
-
 📈 **Prediction Gallery**  
 | Forecast Type | Preview |
 |---------------|---------|
