@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hotel Data System - Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        .login-btn {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .login-btn:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background-color: #ffe6e6;
+            border-radius: 5px;
+        }
+        .demo-info {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: #e7f3ff;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .demo-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: #0066cc;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Hotel Data System</h1>
+        
+        <form method="post">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+        
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <div class="demo-info">
+            <h4>Default Credentials:</h4>
+            <p><strong>Username:</strong> admin<br>
+            <strong>Password:</strong> password123</p>
+            <p><strong>Username:</strong> hotel_manager<br>
+            <strong>Password:</strong> hotel123</p>
+            <p><em>Note: These are created by the database schema.</em></p>
+        </div>
+    </div>
+</body>
+</html>
