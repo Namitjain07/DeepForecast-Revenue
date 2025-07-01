@@ -16,12 +16,11 @@ This project is carried out under the guidance of **Dr. Arjun Ray**.
 📈 **Prediction Gallery**  
 | Forecast Type | Preview |
 |---------------|---------|
-| Prophet 1-Year Daily Model | ![](images/prophet_1_year_forecast.png) |
-| Ensemble Forecast | ![](images/ensemble_forecast.png) |
-| BiLSTM Attention | ![](images/bilstm_attention_forecast.png) |
-| TBATS | ![](images/fitted_tbats.png) |
-| XGBoost | ![](images/forecast_xgboost.png) |
-
+| Prophet 1-Year Daily Model | ![](1-year_forecast_(next_365_days).png) |
+| Scatter Plot- 1 day | ![](1day_relationship_scatter.png) |
+| TBATS | ![](fitted_tbats.png) |
+| Prophet 1-Month Daily Model | ![](1-month_forecast_(next_30_days).png) |
+| Prophet 3-Month Daily Model | ![](3-month_forecast_(next_90_days).png) |
 ---
 
 ## ✨ Highlights
