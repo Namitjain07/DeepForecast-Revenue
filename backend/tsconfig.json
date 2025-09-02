@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    // File Layout
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Node.js environment
+    "target": "ES2020",             // safe for async/await
+    "module": "NodeNext",           // modern Node ESM
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2020"],
+    "types": ["node"],              // enables Node globals (process, __dirname, etc.)
+
+    // Output
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Type checking
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Recommended for modern TS projects
+    "esModuleInterop": true,        // allows `import express from "express"`
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    // Style
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
