@@ -1,0 +1,66 @@
+/* src/styles/page-home.css */
+.page-home {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f9fafb;
+    font-family: "Inter", sans-serif;
+    padding: 20px;
+}
+
+.page-home__container {
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.page-home__icon {
+    background-color: #2563eb;
+    color: white;
+    font-size: 2rem;
+    padding: 12px;
+    border-radius: 16px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.page-home__card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+    margin-top: 16px;
+}
+
+.page-home__form {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.page-home__demo {
+    margin-top: 20px;
+    background-color: #f3f4f6;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.9rem;
+    text-align: left;
+    color: #4b5563;
+}
+
+footer {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+@media (max-width: 600px) {
+    .page-home__card {
+        padding: 20px;
+    }
+
+    .page-home__icon {
+        font-size: 1.5rem;
+        padding: 10px;
+    }
+}

@@ -4,6 +4,7 @@ export interface IAdmin extends Document {
     name: string;
     email: string;
     password: string;
+    imageUrl?: string;
 }
 
 const AdminSchema = new Schema<IAdmin>({
@@ -19,6 +20,10 @@ const AdminSchema = new Schema<IAdmin>({
     password: {
         type: String,
         required: true
+    },
+    imageUrl: {
+        type: String,
+        default: null
     }
 }, {
     timestamps: true

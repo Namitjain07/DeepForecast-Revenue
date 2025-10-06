@@ -19,7 +19,8 @@ export const addHotel = async (req: Request, res: Response) => {
             streetName,
             city,
             state,
-            pincode
+            pincode,
+            imageUrl
         } = req.body;
 
         // Check for required fields
@@ -59,7 +60,8 @@ export const addHotel = async (req: Request, res: Response) => {
             streetName,
             city,
             state,
-            pincode
+            pincode,
+            imageUrl
         });
 
         res.status(201).json({
@@ -69,7 +71,8 @@ export const addHotel = async (req: Request, res: Response) => {
                 name: hotel.name,
                 email: hotel.email,
                 city: hotel.city,
-                state: hotel.state
+                state: hotel.state,
+                imageUrl: hotel.imageUrl
             }
         });
 

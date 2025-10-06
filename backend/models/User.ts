@@ -6,6 +6,7 @@ export interface IUser extends Document {
     email: string;
     password: string;
     role: 'owner' | 'manager';
+    imageUrl?: string;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -31,6 +32,10 @@ const UserSchema = new Schema<IUser>({
         type: String,
         enum: ['owner', 'manager'],
         required: true
+    },
+    imageUrl: {
+        type: String,
+        default: null
     }
 }, {
     timestamps: true

@@ -37,7 +37,8 @@ export const login = async (req: Request, res: Response) => {
                     id: admin._id,
                     name: admin.name,
                     email: admin.email,
-                    role: 'admin'
+                    role: 'admin',
+                    imageUrl: admin.imageUrl
                 }
             });
         }
@@ -60,7 +61,8 @@ export const login = async (req: Request, res: Response) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                imageUrl: user.imageUrl
             }
         });
 
@@ -75,7 +77,7 @@ export const login = async (req: Request, res: Response) => {
 // Add new user - Only admin can add owner, admin/owner can add manager
 export const addUser = async (req: Request, res: Response) => {
     try {
-        const { name, email, password, hotelId, role } = req.body;
+        const { name, email, password, hotelId, role, imageUrl } = req.body;
 
         if (!name || !email || !password || !hotelId || !role) {
             throw new ApiError('Please provide all required fields', 400);
@@ -108,7 +110,8 @@ export const addUser = async (req: Request, res: Response) => {
             email,
             password: await hashPassword(password),
             hotelId,
-            role
+            role,
+            imageUrl
         });
 
         res.status(201).json({
@@ -117,7 +120,8 @@ export const addUser = async (req: Request, res: Response) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                imageUrl: user.imageUrl
             }
         });
 
@@ -132,7 +136,7 @@ export const addUser = async (req: Request, res: Response) => {
 // Add new admin
 export const addAdmin = async (req: Request, res: Response) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, imageUrl } = req.body;
 
         if (!name || !email || !password) {
             throw new ApiError('Please provide all required fields', 400);
@@ -148,7 +152,8 @@ export const addAdmin = async (req: Request, res: Response) => {
         const admin = await Admin.create({
             name,
             email,
-            password: await hashPassword(password)
+            password: await hashPassword(password),
+            imageUrl
         });
 
         res.status(201).json({
@@ -156,7 +161,8 @@ export const addAdmin = async (req: Request, res: Response) => {
             admin: {
                 id: admin._id,
                 name: admin.name,
-                email: admin.email
+                email: admin.email,
+                imageUrl: admin.imageUrl
             }
         });
 

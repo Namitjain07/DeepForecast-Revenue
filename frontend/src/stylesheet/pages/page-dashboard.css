@@ -1,0 +1,74 @@
+.page-dashboard {
+    background-color: #f9fafb;
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+}
+
+.dashboard-container h2{
+    color: #000;
+    font-family: Poppins, sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    /*width: 30rem;*/
+}
+
+.dashboard-header h3{
+    color: #000;
+    font-family: Poppins, sans-serif;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
+.dashboard-heading-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 20rem;
+}
+
+.dashboard-heading-container{
+    width: 20rem;
+}
+
+.dashboard-container {
+    padding: 24px;
+}
+
+.dashboard-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.dashboard-hotels {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.add-hotel-btn {
+    background-color: #2563eb;
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.hotel-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}

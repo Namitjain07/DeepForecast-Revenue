@@ -1,13 +1,21 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import axios from 'axios';
+import type {Dispatch} from '@reduxjs/toolkit';
+import { loginStart, loginSuccess, loginFailure } from '../slices/authSlice';
 
-export const api = createApi({
-    reducerPath: "api",
-    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
-    endpoints: (builder) => ({
-        getUsers: builder.query<any[], void>({
-            query: () => "/users",
-        }),
-    }),
-});
+const API_URL = import.meta.env.VITE_API_URL;
 
-export const { useGetUsersQuery } = api;
+export const loginUser = (email: string, password: string) => async (dispatch: Dispatch) => {
+    try {
+        dispatch(loginStart());
+        const response = await axios.post(`${API_URL}/auth/login`, {
+            email,
+            password,
+        });
+        dispatch(loginSuccess(response.data));
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'An error occurred';
+        dispatch(loginFailure(message));
+        throw error;
+    }
+};

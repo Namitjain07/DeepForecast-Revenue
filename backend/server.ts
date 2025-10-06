@@ -10,6 +10,7 @@ import swaggerUi from 'swagger-ui-express';
 import { specs } from './config/swagger';
 import authRoutes from "./routes/auth.route";
 import hotelRoutes from "./routes/hotel.route";
+import uploadRoutes from "./routes/upload.route";
 
 dotenv.config();
 
@@ -20,8 +21,8 @@ connectDB();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Swagger Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
@@ -29,6 +30,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/hotels', hotelRoutes);
+app.use('/api/v1/upload', uploadRoutes);
 
 // Basic route
 app.get("/", (req, res) => {

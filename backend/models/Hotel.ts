@@ -10,6 +10,7 @@ export interface IHotel extends Document {
     city: string;
     state: string;
     pincode: string;
+    imageUrl?: string;
 }
 
 const HotelSchema = new Schema<IHotel>({
@@ -49,6 +50,10 @@ const HotelSchema = new Schema<IHotel>({
     pincode: {
         type: String,
         required: true
+    },
+    imageUrl: {
+        type: String,
+        default: null
     }
 }, {
     timestamps: true
