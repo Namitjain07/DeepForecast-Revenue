@@ -1,0 +1,47 @@
+.page-individual-hotel-container {
+    padding: 24px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+.page-individual-hotel-header {
+    margin-bottom: 32px;
+}
+
+.page-individual-hotel-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.page-individual-hotel-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+
+
+.page-individual-hotel-section {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .page-individual-hotel-container {
+        padding: 16px;
+    }
+
+    .page-individual-hotel-section {
+        padding: 16px;
+    }
+
+    .page-individual-hotel-header h1 {
+        font-size: 24px;
+    }
+}
+

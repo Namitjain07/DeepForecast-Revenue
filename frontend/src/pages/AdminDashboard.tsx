@@ -1,5 +1,6 @@
 // src/pages/AdminDashboard.tsx
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminNavbar from "../components/dashboard/AdminNavbar.tsx";
 import StatCard from "../components/dashboard/StatCard";
 import HotelCard from "../components/dashboard/HotelCard";
@@ -9,6 +10,7 @@ import { fetchDashboardStats, fetchRecentlyAddedHotels } from "../redux/services
 
 const AdminDashboard = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { stats } = useAppSelector((state) => state.dashboard);
     const { recentHotels, loading: hotelsLoading } = useAppSelector((state) => state.hotels);
 
@@ -19,6 +21,10 @@ const AdminDashboard = () => {
         // Fetch recently added hotels (limit: 3)
         dispatch(fetchRecentlyAddedHotels(3) as any);
     }, [dispatch]);
+
+    const handleHotelClick = (hotelId: string) => {
+        navigate(`/hotel/${hotelId}`);
+    };
 
     const mockImageUrl = "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80";
 
@@ -71,7 +77,7 @@ const AdminDashboard = () => {
                                         city={hotel.city}
                                         contact={hotel.contactNumber}
                                         imageUrl={hotel.imageUrl || mockImageUrl}
-                                        onClick={() => console.log(`Clicked on ${hotel.hotelName}`)}
+                                        onClick={() => handleHotelClick(hotel.id)}
                                     />
                                 ))
                             ) : (

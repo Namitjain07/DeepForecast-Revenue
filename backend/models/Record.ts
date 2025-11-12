@@ -16,9 +16,6 @@ export interface IRecord extends Document {
     oooRooms: number;
     pax: number;
     totalRoomInventory: number;
-    snapshotDate: Date;
-    arrivalDate: Date;
-    actualOrForecast: 'actual' | 'forecast';
 }
 
 const RecordSchema = new Schema<IRecord>({
@@ -81,19 +78,6 @@ const RecordSchema = new Schema<IRecord>({
     },
     totalRoomInventory: {
         type: Number,
-        required: true
-    },
-    snapshotDate: {
-        type: Date,
-        required: true
-    },
-    arrivalDate: {
-        type: Date,
-        required: true
-    },
-    actualOrForecast: {
-        type: String,
-        enum: ['actual', 'forecast'],
         required: true
     }
 }, {

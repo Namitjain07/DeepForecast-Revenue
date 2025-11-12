@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import User from '../models/User';
 import Admin from '../models/Admin';
 import { generateToken, hashPassword } from '../helpers/auth.helpers';
+import { recordFailedLoginAttempt, recordSuccessfulLogin } from '../security/bruteForceProtection';
 
 class ApiError extends Error {
     statusCode: number;
@@ -27,8 +28,13 @@ export const login = async (req: Request, res: Response) => {
         if (admin) {
             const isMatch = await bcrypt.compare(password, admin.password);
             if (!isMatch) {
+                // Record failed attempt
+                recordFailedLoginAttempt(email);
                 throw new ApiError('Invalid credentials', 401);
             }
+
+            // Record successful login (reset attempt counter)
+            recordSuccessfulLogin(email);
 
             return res.status(200).json({
                 message: 'Login successful',
@@ -46,13 +52,20 @@ export const login = async (req: Request, res: Response) => {
         // If not an admin, check if it's a user
         const user = await User.findOne({ email });
         if (!user) {
+            // Record failed attempt
+            recordFailedLoginAttempt(email);
             throw new ApiError('Invalid credentials', 401);
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            // Record failed attempt
+            recordFailedLoginAttempt(email);
             throw new ApiError('Invalid credentials', 401);
         }
+
+        // Record successful login (reset attempt counter)
+        recordSuccessfulLogin(email);
 
         return res.status(200).json({
             message: 'Login successful',

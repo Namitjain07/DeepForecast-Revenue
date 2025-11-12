@@ -10,7 +10,8 @@ import Admin from './models/Admin';
 import Hotel from './models/Hotel';
 import User from './models/User';
 import Record from './models/Record';
-import Cache from './models/Cache';
+import Forecast from './models/Forecast';
+import LastTrain from './models/Lasttrain';
 
 const MONGO_URI = process.env.MONGODB_URI || process.env.MONGODB_URI || '';
 
@@ -29,12 +30,6 @@ async function hashPassword (password: string) {
 
 function randomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function randomDateWithinDays(daysBack: number) {
-    const now = new Date();
-    const past = new Date(now.getTime() - Math.floor(Math.random() * daysBack) * 24 * 60 * 60 * 1000);
-    return past;
 }
 
 async function seed() {
@@ -99,7 +94,8 @@ async function seed() {
         await Hotel.deleteMany({});
         await User.deleteMany({});
         await Record.deleteMany({});
-        await Cache.deleteMany({});
+        await Forecast.deleteMany({});
+        await LastTrain.deleteMany({});
 
         // Create 10 Admins
         const adminDocs: any[] = [];
@@ -141,80 +137,123 @@ async function seed() {
             throw new Error('No hotels were created during seeding');
         }
 
-        // Create 10 Users (assign to hotels round-robin) with roles owner/manager
+        // Create 10 Users (assign to hotels: 1 owner + 1 manager per hotel)
         const userDocs: any[] = [];
-        const roles: Array<'owner' | 'manager'> = ['owner', 'manager'];
         for (let i = 1; i <= 10; i++) {
-            // safe because savedHotels checked above
             const hotelForUser = savedHotels[(i - 1) % savedHotels.length] as any;
-            const role = roles[i % 2];
+
+            // Create owner for this hotel
             userDocs.push({
                 hotelId: hotelForUser._id,
-                name: `User ${i}`,
-                email: `user${i}@example.com`,
-                password: await hashPassword('userpass123'),
-                role,
-                imageUrl: `https://picsum.photos/seed/user${i}/200/200`
+                name: `Owner ${i}`,
+                email: `owner${i}@example.com`,
+                password: await hashPassword('ownerpass123'),
+                role: 'owner',
+                imageUrl: `https://picsum.photos/seed/owner${i}/200/200`
+            });
+
+            // Create manager for this hotel
+            userDocs.push({
+                hotelId: hotelForUser._id,
+                name: `Manager ${i}`,
+                email: `manager${i}@example.com`,
+                password: await hashPassword('managerpass123'),
+                role: 'manager',
+                imageUrl: `https://picsum.photos/seed/manager${i}/200/200`
             });
         }
         const savedUsers = (await User.insertMany(userDocs)) as any[];
-        console.log(`Inserted ${savedUsers.length} users`);
+        console.log(`Inserted ${savedUsers.length} users (owners and managers)`);
 
-        // Create 10 Records (assign randomly to hotels)
+        // Create time series Records (one entry per day for 90 days per hotel)
         const recordDocs: any[] = [];
-        for (let i = 1; i <= 1000; i++) {
-            const hotel = savedHotels[randomInt(0, savedHotels.length - 1)] as any; // safe due to earlier check
-            const date = randomDateWithinDays(30);
-            const roomsSold = randomInt(20, 200);
-            const totalInventory = randomInt(100, 250);
-            const occupancy = Math.round((roomsSold / totalInventory) * 100 * 100) / 100; // percent
-            const arr = randomInt(50, 300);
-            const depart = randomInt(10, 100);
+        const baseDate = new Date();
+        baseDate.setDate(baseDate.getDate() - 90);
 
-            recordDocs.push({
-                hotelId: hotel._id,
-                date,
-                roomsSold,
-                day: date.toLocaleString('en-US', { weekday: 'long' }),
-                arrivalRooms: arr,
-                complimentRooms: randomInt(0, 5),
-                houseUse: randomInt(0, 5),
-                individualConfirm: randomInt(0, 10),
-                occupancyPercentage: occupancy,
-                roomRevenue: randomInt(2000, 50000),
-                averageRoomRate: Math.round((randomInt(100, 500) + Math.random()) * 100) / 100,
-                departureRooms: depart,
-                oooRooms: randomInt(0, 3),
-                pax: randomInt(20, 300),
-                totalRoomInventory: totalInventory,
-                snapshotDate: new Date(),
-                arrivalDate: date,
-                actualOrForecast: Math.random() > 0.5 ? 'actual' : 'forecast'
-            });
+        for (let hotelIdx = 0; hotelIdx < savedHotels.length; hotelIdx++) {
+            const hotel = savedHotels[hotelIdx] as any;
+            for (let dayOffset = 0; dayOffset < 90; dayOffset++) {
+                const date = new Date(baseDate);
+                date.setDate(date.getDate() + dayOffset);
+
+                const roomsSold = randomInt(20, 200);
+                const totalInventory = randomInt(100, 250);
+                const occupancy = Math.round((roomsSold / totalInventory) * 100 * 100) / 100;
+
+                recordDocs.push({
+                    hotelId: hotel._id,
+                    date,
+                    roomsSold,
+                    day: date.toLocaleString('en-US', { weekday: 'long' }),
+                    arrivalRooms: randomInt(50, 150),
+                    complimentRooms: randomInt(0, 5),
+                    houseUse: randomInt(0, 5),
+                    individualConfirm: randomInt(0, 10),
+                    occupancyPercentage: occupancy,
+                    roomRevenue: Math.round(roomsSold * randomInt(100, 500)),
+                    averageRoomRate: Math.round((randomInt(100, 500) + Math.random()) * 100) / 100,
+                    departureRooms: randomInt(10, 100),
+                    oooRooms: randomInt(0, 3),
+                    pax: roomsSold * randomInt(1, 3),
+                    totalRoomInventory: totalInventory
+                });
+            }
         }
         const savedRecords = (await Record.insertMany(recordDocs)) as any[];
-        console.log(`Inserted ${savedRecords.length} records`);
+        console.log(`Inserted ${savedRecords.length} time series records (90 days × 10 hotels)`);
 
-        // Create 10 Cache entries
-        const cacheDocs: any[] = [];
-        for (let i = 1; i <= 100; i++) {
-            const hotel = savedHotels[randomInt(0, savedHotels.length - 1)] as any; // safe due to earlier check
-            const date = randomDateWithinDays(10);
-            const roomSold = randomInt(20, 200);
-            const revenue = Math.round(roomSold * randomInt(100, 500));
+        // Create time series Forecast data (one entry per day for 30 future days per hotel)
+        const forecastDocs: any[] = [];
+        const forecastBaseDate = new Date();
 
-            cacheDocs.push({
+        for (let hotelIdx = 0; hotelIdx < savedHotels.length; hotelIdx++) {
+            const hotel = savedHotels[hotelIdx] as any;
+            for (let dayOffset = 1; dayOffset <= 30; dayOffset++) {
+                const date = new Date(forecastBaseDate);
+                date.setDate(date.getDate() + dayOffset);
+
+                const roomSold = randomInt(20, 200);
+                const revenue = Math.round(roomSold * randomInt(100, 500));
+
+                forecastDocs.push({
+                    hotelId: hotel._id,
+                    date,
+                    revenue,
+                    roomSold,
+                    arrivalRoom: randomInt(30, 120),
+                    departureRoom: randomInt(10, 80),
+                    oooRoom: randomInt(0, 5)
+                });
+            }
+        }
+        const savedForecasts = (await Forecast.insertMany(forecastDocs)) as any[];
+        console.log(`Inserted ${savedForecasts.length} time series forecast entries (30 days × 10 hotels)`);
+
+        // Create 10 LastTrain entries (one per hotel)
+        const lastTrainDocs: any[] = [];
+        const statuses: Array<'none' | 'queued' | 'running' | 'success' | 'failure'> = ['none', 'queued', 'running', 'success', 'failure'];
+        for (let i = 0; i < 10; i++) {
+            const hotel = savedHotels[i] as any;
+            const user = savedUsers[i * 2] as any; // Use owner for last train
+            const startDateTime = new Date();
+            startDateTime.setDate(startDateTime.getDate() - randomInt(1, 7));
+            startDateTime.setHours(randomInt(0, 23), randomInt(0, 59), 0);
+
+            const endDateTime = new Date(startDateTime);
+            endDateTime.setMinutes(endDateTime.getMinutes() + randomInt(5, 120));
+
+            const status = statuses[randomInt(0, statuses.length - 1)];
+
+            lastTrainDocs.push({
                 hotelId: hotel._id,
-                date,
-                revenue,
-                roomSold,
-                arrivalRoom: randomInt(0, 50),
-                departureRoom: randomInt(0, 50),
-                oooRoom: randomInt(0, 5)
+                userId: user._id,
+                startDateTime,
+                endDateTime,
+                status
             });
         }
-        const savedCaches = (await Cache.insertMany(cacheDocs)) as any[];
-        console.log(`Inserted ${savedCaches.length} cache entries`);
+        const savedLastTrains = (await LastTrain.insertMany(lastTrainDocs)) as any[];
+        console.log(`Inserted ${savedLastTrains.length} last train entries`);
 
         console.log('Seeding completed successfully');
     } catch (err) {

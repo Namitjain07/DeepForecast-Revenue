@@ -8,6 +8,7 @@ import OwnerDashboard from "./pages/OwnerDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import AllHotels from "./pages/AllHotels";
 import AddHotel from "./pages/AddHotel";
+import IndividualHotelPage from "./pages/IndividualHotelPage";
 import { useAppSelector } from './redux/hooks';
 import type {JSX} from "react";
 
@@ -69,6 +70,14 @@ function App() {
                         element={
                             <PrivateRoute allowedRoles={['admin']}>
                                 <AddHotel />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/hotel/:hotelId"
+                        element={
+                            <PrivateRoute allowedRoles={['admin', 'owner', 'manager']}>
+                                <IndividualHotelPage />
                             </PrivateRoute>
                         }
                     />

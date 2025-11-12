@@ -1,0 +1,44 @@
+.component-ui-general-info-container {
+    width: 100%;
+}
+
+.component-ui-general-info-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 20px 0;
+}
+
+.component-ui-general-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.component-ui-general-info-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.component-ui-general-info-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.component-ui-general-info-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .component-ui-general-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+

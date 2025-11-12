@@ -7,16 +7,6 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchAllHotels, searchHotels } from '../redux/services/api';
 import { clearSearch } from '../redux/slices/hotelSlice';
 
-// interface Hotel {
-//     id: string;
-//     name: string;
-//     email: string;
-//     contactNumber: string;
-//     city: string;
-//     imageUrl?: string;
-//     ownerName: string;
-// }
-
 const AllHotels: React.FC = () => {
     const role = localStorage.getItem('userRole') as 'admin' | 'owner' | 'manager' || 'admin';
     const navigate = useNavigate();
@@ -83,7 +73,7 @@ const AllHotels: React.FC = () => {
     };
 
     const handleHotelClick = (hotelId: string) => {
-        console.log('Hotel clicked:', hotelId);
+        navigate(`/hotel/${hotelId}`);
     };
 
     // Display either search results or all hotels
@@ -165,4 +155,3 @@ const AllHotels: React.FC = () => {
 };
 
 export default AllHotels;
-

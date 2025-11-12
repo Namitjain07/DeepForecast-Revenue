@@ -1,7 +1,8 @@
 // @ts-ignore
 import express from 'express';
 import { login, addUser, addAdmin } from '../controllers/auth.controller';
-import { protect, adminOnly } from '../middleware/auth.middleware';
+import { protect } from '../middleware/auth.middleware';
+import { loginRateLimitMiddleware } from '../security/bruteForceProtection';
 
 const router = express.Router();
 
@@ -11,6 +12,14 @@ const router = express.Router();
  *   post:
  *     summary: Login for users and admins
  *     tags: [Authentication]
+ *     description: |
+ *       Authenticate user and receive JWT token.
+ *
+ *       **Security Features:**
+ *       - Brute force protection with exponential backoff delays
+ *       - Account lockout after 5 failed attempts for 15 minutes
+ *       - Input validation to prevent SQL injection
+ *       - Rate limiting on login attempts
  *     requestBody:
  *       required: true
  *       content:
@@ -51,8 +60,10 @@ const router = express.Router();
  *                       type: string
  *       401:
  *         description: Invalid credentials
+ *       429:
+ *         description: Too many login attempts - Account temporarily locked
  */
-router.post('/login', login);
+router.post('/login', loginRateLimitMiddleware, login);
 
 /**
  * @swagger

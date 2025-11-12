@@ -1,0 +1,110 @@
+.component-ui-download-csv-container {
+    width: 100%;
+}
+
+.component-ui-download-csv-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 20px 0;
+}
+
+.component-ui-download-csv-content {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.component-ui-download-csv-form {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    flex: 1;
+}
+
+.component-ui-download-csv-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.component-ui-download-csv-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.component-ui-download-csv-input {
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #1a1a1a;
+    font-family: inherit;
+    background-color: white;
+    transition: border-color 0.2s ease;
+}
+
+.component-ui-download-csv-input:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.component-ui-download-csv-button {
+    padding: 10px 24px;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.component-ui-download-csv-button:hover:not(:disabled) {
+    background-color: #1565c0;
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.component-ui-download-csv-button:disabled {
+    background-color: #9ccc65;
+    cursor: not-allowed;
+}
+
+.component-ui-download-csv-info {
+    flex: 1;
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    border-left: 4px solid #1976d2;
+}
+
+.component-ui-download-csv-info-text {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .component-ui-download-csv-content {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .component-ui-download-csv-form {
+        flex-direction: column;
+    }
+
+    .component-ui-download-csv-input,
+    .component-ui-download-csv-button {
+        width: 100%;
+    }
+}
+
