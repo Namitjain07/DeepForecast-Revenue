@@ -1,6 +1,6 @@
 // @ts-ignore
 import express from 'express';
-import { addHotel } from '../controllers/hotel.controller';
+import { addHotel, getRecentlyAddedHotels, searchHotels, getAllHotels } from '../controllers/hotel.controller';
 import { protect, adminOnly } from '../middleware/auth.middleware';
 
 const router = express.Router();
@@ -83,5 +83,206 @@ const router = express.Router();
  *         description: Unauthorized - Admin access required
  */
 router.post('/add_hotel', protect, adminOnly, addHotel);
+
+/**
+ * @swagger
+ * /api/v1/hotels/recently-added:
+ *   post:
+ *     summary: Get recently added hotels
+ *     tags: [Hotels]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               limit:
+ *                 type: number
+ *                 default: 5
+ *                 description: Number of recently added hotels to fetch (max 100)
+ *     responses:
+ *       200:
+ *         description: Recently added hotels retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 count:
+ *                   type: number
+ *                 hotels:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       hotelName:
+ *                         type: string
+ *                       ownerName:
+ *                         type: string
+ *                       city:
+ *                         type: string
+ *                       contactNumber:
+ *                         type: string
+ *                       imageUrl:
+ *                         type: string
+ *                       addedAt:
+ *                         type: string
+ *                         format: date-time
+ *       400:
+ *         description: Invalid input
+ */
+router.post('/recently-added', protect, getRecentlyAddedHotels);
+
+/**
+ * @swagger
+ * /api/v1/hotels/search:
+ *   post:
+ *     summary: Search hotels by name or owner name
+ *     tags: [Hotels]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - searchTerm
+ *             properties:
+ *               searchTerm:
+ *                 type: string
+ *                 description: Search term for hotel name or owner name
+ *               page:
+ *                 type: number
+ *                 default: 1
+ *                 description: Page number for pagination
+ *               limit:
+ *                 type: number
+ *                 default: 10
+ *                 description: Number of results per page (max 100)
+ *     responses:
+ *       200:
+ *         description: Hotels found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 searchTerm:
+ *                   type: string
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: number
+ *                     pageSize:
+ *                       type: number
+ *                     totalCount:
+ *                       type: number
+ *                     totalPages:
+ *                       type: number
+ *                     hasNextPage:
+ *                       type: boolean
+ *                 hotels:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       hotelName:
+ *                         type: string
+ *                       ownerName:
+ *                         type: string
+ *                       city:
+ *                         type: string
+ *                       contactNumber:
+ *                         type: string
+ *                       imageUrl:
+ *                         type: string
+ *       400:
+ *         description: Missing search term
+ */
+router.post('/search', protect, searchHotels);
+
+/**
+ * @swagger
+ * /api/v1/hotels:
+ *   get:
+ *     summary: Get all hotels with pagination (for infinite scroll)
+ *     tags: [Hotels]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: number
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: number
+ *           default: 10
+ *         description: Number of results per page (max 100)
+ *     responses:
+ *       200:
+ *         description: Hotels retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: number
+ *                     pageSize:
+ *                       type: number
+ *                     totalCount:
+ *                       type: number
+ *                     totalPages:
+ *                       type: number
+ *                     hasNextPage:
+ *                       type: boolean
+ *                     hasPreviousPage:
+ *                       type: boolean
+ *                 hotels:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                       contactNumber:
+ *                         type: string
+ *                       city:
+ *                         type: string
+ *                       state:
+ *                         type: string
+ *                       imageUrl:
+ *                         type: string
+ *                       adminName:
+ *                         type: string
+ */
+router.get('/', protect, getAllHotels);
 
 export default router;

@@ -10,6 +10,7 @@ import swaggerUi from 'swagger-ui-express';
 import { specs } from './config/swagger';
 import authRoutes from "./routes/auth.route";
 import hotelRoutes from "./routes/hotel.route";
+import adminDashboardRoutes from "./routes/admin.dashboard.route";
 import uploadRoutes from "./routes/upload.route";
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/hotels', hotelRoutes);
+app.use('/api/v1/admin/dashboard', adminDashboardRoutes);
 app.use('/api/v1/upload', uploadRoutes);
 
 // Basic route

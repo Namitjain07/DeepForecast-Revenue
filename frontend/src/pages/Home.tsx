@@ -78,9 +78,9 @@ function Home() {
 
                     <div className="page-home__demo">
                         <p><strong>Demo Credentials:</strong></p>
-                        <p><b>Admin:</b> user@example.com / string</p>
-                        {/*<p><b>Owner:</b> john@grandhotel.com / password</p>*/}
-                        {/*<p><b>Manager:</b> sarah@grandhotel.com / password</p>*/}
+                        <p><b>Admin:</b> admin1@example.com / password123</p>
+                        <p><b>Owner:</b> user2@example.com / userpass123</p>
+                        <p><b>Manager:</b> user1@example.com / userpass123</p>
                     </div>
                 </div>
 

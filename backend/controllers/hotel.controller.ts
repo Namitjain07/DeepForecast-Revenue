@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import Hotel from '../models/Hotel';
+import User from '../models/User';
+import * as bcrypt from 'bcryptjs';
 
 class ApiError extends Error {
     statusCode: number;
@@ -20,11 +22,14 @@ export const addHotel = async (req: Request, res: Response) => {
             city,
             state,
             pincode,
-            imageUrl
+            imageUrl,
+            ownerName,
+            ownerEmail,
+            ownerPassword
         } = req.body;
 
-        // Check for required fields
-        const requiredFields = [
+        // Check for required hotel fields
+        const requiredHotelFields = [
             'name',
             'email',
             'contactNumber',
@@ -35,9 +40,14 @@ export const addHotel = async (req: Request, res: Response) => {
             'pincode'
         ];
 
-        const missingFields = requiredFields.filter(field => !req.body[field]);
-        if (missingFields.length > 0) {
-            throw new ApiError(`Missing required fields: ${missingFields.join(', ')}`, 400);
+        const missingHotelFields = requiredHotelFields.filter(field => !req.body[field]);
+        if (missingHotelFields.length > 0) {
+            throw new ApiError(`Missing required hotel fields: ${missingHotelFields.join(', ')}`, 400);
+        }
+
+        // Check for required owner fields
+        if (!ownerName || !ownerEmail || !ownerPassword) {
+            throw new ApiError('Missing required owner fields: ownerName, ownerEmail, ownerPassword', 400);
         }
 
         // Get admin ID from authenticated user
@@ -49,6 +59,16 @@ export const addHotel = async (req: Request, res: Response) => {
         if (hotelExists) {
             throw new ApiError('Hotel with this email already exists', 400);
         }
+
+        // Check if owner email already exists
+        const ownerExists = await User.findOne({ email: ownerEmail });
+        if (ownerExists) {
+            throw new ApiError('Owner with this email already exists', 400);
+        }
+
+        // Hash owner password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(ownerPassword, salt);
 
         // Create hotel
         const hotel = await Hotel.create({
@@ -64,18 +84,231 @@ export const addHotel = async (req: Request, res: Response) => {
             imageUrl
         });
 
+        // Create owner user for the hotel
+        const owner = await User.create({
+            hotelId: hotel._id,
+            name: ownerName,
+            email: ownerEmail,
+            password: hashedPassword,
+            role: 'owner',
+            imageUrl: imageUrl || `https://picsum.photos/seed/owner${Date.now()}/200/200`
+        });
+
         res.status(201).json({
-            message: 'Hotel added successfully',
+            message: 'Hotel and owner created successfully',
             hotel: {
                 id: hotel._id,
                 name: hotel.name,
                 email: hotel.email,
                 city: hotel.city,
                 state: hotel.state,
-                imageUrl: hotel.imageUrl
+                imageUrl: hotel.imageUrl,
+                owner: {
+                    id: owner._id,
+                    name: owner.name,
+                    email: owner.email,
+                    role: owner.role
+                }
             }
         });
 
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).json({
+            message: error.message || 'An unexpected error occurred'
+        });
+    }
+};
+
+export const getRecentlyAddedHotels = async (req: Request, res: Response) => {
+    try {
+        const { limit = 5 } = req.body;
+
+        // Validate limit
+        const parsedLimit = Math.min(parseInt(limit) || 5, 100);
+
+        // Fetch recently added hotels (sorted by creation date, newest first)
+        const hotels = await Hotel.find()
+            .sort({ createdAt: -1 })
+            .limit(parsedLimit)
+            .select('name email contactNumber city imageUrl _id createdAt');
+
+        // Format response with ownerName from User table
+        const formattedHotels = await Promise.all(
+            hotels.map(async (hotel: any) => {
+                // Find owner user for this hotel
+                const owner = await User.findOne(
+                    { hotelId: hotel._id, role: 'owner' },
+                    'name'
+                );
+
+                return {
+                    id: hotel._id,
+                    hotelName: hotel.name,
+                    ownerName: owner?.name || 'N/A',
+                    city: hotel.city,
+                    contactNumber: hotel.contactNumber,
+                    imageUrl: hotel.imageUrl,
+                    addedAt: hotel.createdAt
+                };
+            })
+        );
+
+        res.status(200).json({
+            message: 'Recently added hotels retrieved successfully',
+            count: formattedHotels.length,
+            hotels: formattedHotels
+        });
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).json({
+            message: error.message || 'An unexpected error occurred'
+        });
+    }
+};
+
+export const searchHotels = async (req: Request, res: Response) => {
+    try {
+        const { searchTerm, page = 1, limit = 10 } = req.body;
+
+        if (!searchTerm || searchTerm.trim() === '') {
+            throw new ApiError('Search term is required', 400);
+        }
+
+        const pageNum = Math.max(1, parseInt(page) || 1);
+        const limitNum = Math.min(parseInt(limit) || 10, 100);
+        const skip = (pageNum - 1) * limitNum;
+
+        // First, find all users (owners) matching the search term
+        const matchingOwners = await User.find(
+            {
+                $and: [
+                    { role: 'owner' },
+                    { name: { $regex: searchTerm, $options: 'i' } }
+                ]
+            },
+            'hotelId'
+        );
+
+        // Extract hotel IDs from matching owners
+        const ownerHotelIds = matchingOwners.map(owner => owner.hotelId);
+
+        // Create search query - find hotels by name OR by owner
+        const searchQuery = {
+            $or: [
+                { name: { $regex: searchTerm, $options: 'i' } },
+                { _id: { $in: ownerHotelIds } }
+            ]
+        };
+
+        // Get total count for pagination
+        const totalCount = await Hotel.countDocuments(searchQuery);
+
+        // Fetch hotels with pagination
+        const hotels = await Hotel.find(searchQuery)
+            .limit(limitNum)
+            .skip(skip)
+            .select('name email contactNumber city imageUrl _id createdAt');
+
+        // Format response with ownerName and managerName from User table
+        const formattedHotels = await Promise.all(
+            hotels.map(async (hotel: any) => {
+                // Find owner user for this hotel
+                const owner = await User.findOne(
+                    { hotelId: hotel._id, role: 'owner' },
+                    'name'
+                );
+
+                // Find manager user for this hotel
+                const manager = await User.findOne(
+                    { hotelId: hotel._id, role: 'manager' },
+                    'name'
+                );
+
+                return {
+                    id: hotel._id,
+                    name: hotel.name,
+                    ownerName: owner?.name || 'N/A',
+                    // managerName: manager?.name || 'N/A',
+                    city: hotel.city,
+                    contactNumber: hotel.contactNumber,
+                    imageUrl: hotel.imageUrl
+                };
+            })
+        );
+
+        res.status(200).json({
+            message: 'Hotels found',
+            searchTerm,
+            pagination: {
+                currentPage: pageNum,
+                pageSize: limitNum,
+                totalCount,
+                totalPages: Math.ceil(totalCount / limitNum),
+                hasNextPage: skip + limitNum < totalCount
+            },
+            hotels: formattedHotels
+        });
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).json({
+            message: error.message || 'An unexpected error occurred'
+        });
+    }
+};
+
+export const getAllHotels = async (req: Request, res: Response) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+
+        const pageNum = Math.max(1, parseInt(page as string) || 1);
+        const limitNum = Math.min(parseInt(limit as string) || 10, 100);
+        const skip = (pageNum - 1) * limitNum;
+
+        // Get total count of hotels
+        const totalCount = await Hotel.countDocuments();
+
+        // Fetch hotels with pagination
+        const hotels = await Hotel.find()
+            .sort({ createdAt: -1 })
+            .limit(limitNum)
+            .skip(skip)
+            .select('name email contactNumber city state imageUrl _id createdAt');
+
+        // Format response with ownerName from User table
+        const formattedHotels = await Promise.all(
+            hotels.map(async (hotel: any) => {
+                // Find owner user for this hotel
+                const owner = await User.findOne(
+                    { hotelId: hotel._id, role: 'owner' },
+                    'name'
+                );
+
+                return {
+                    id: hotel._id,
+                    name: hotel.name,
+                    email: hotel.email,
+                    contactNumber: hotel.contactNumber,
+                    city: hotel.city,
+                    state: hotel.state,
+                    imageUrl: hotel.imageUrl,
+                    ownerName: owner?.name || 'N/A'
+                };
+            })
+        );
+
+        res.status(200).json({
+            message: 'Hotels retrieved successfully',
+            pagination: {
+                currentPage: pageNum,
+                pageSize: limitNum,
+                totalCount,
+                totalPages: Math.ceil(totalCount / limitNum),
+                hasNextPage: skip + limitNum < totalCount,
+                hasPreviousPage: pageNum > 1
+            },
+            hotels: formattedHotels
+        });
     } catch (error: any) {
         const statusCode = error.statusCode || 500;
         res.status(statusCode).json({

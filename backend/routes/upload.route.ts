@@ -31,7 +31,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post('/', protect, uploadFile);
+router.post('/', uploadFile);
 
 /**
  * @swagger
@@ -55,6 +55,6 @@ router.post('/', protect, uploadFile);
  *       500:
  *         description: Server error
  */
-router.delete('/:publicId', protect, deleteFile);
+router.delete('/:publicId', deleteFile);
 
 export default router;
