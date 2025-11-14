@@ -165,15 +165,22 @@ async function seed() {
         const savedUsers = (await User.insertMany(userDocs)) as any[];
         console.log(`Inserted ${savedUsers.length} users (owners and managers)`);
 
-        // Create time series Records (one entry per day for 90 days per hotel)
+        // Create time series Records (one entry per day for 1 year back from today per hotel)
         const recordDocs: any[] = [];
-        const baseDate = new Date();
-        baseDate.setDate(baseDate.getDate() - 90);
+        const today = new Date();
+        const recordStartDate = new Date(today);
+        recordStartDate.setDate(recordStartDate.getDate() - 365); // 1 year back
+        const recordEndDate = new Date(today);
+
+        // Calculate number of days exactly to be safe across DST boundaries
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const recordDaysCount = Math.round((recordEndDate.getTime() - recordStartDate.getTime()) / msPerDay) + 1;
 
         for (let hotelIdx = 0; hotelIdx < savedHotels.length; hotelIdx++) {
             const hotel = savedHotels[hotelIdx] as any;
-            for (let dayOffset = 0; dayOffset < 90; dayOffset++) {
-                const date = new Date(baseDate);
+            // Generate records for each day in the past 365 days
+            for (let dayOffset = 0; dayOffset < recordDaysCount; dayOffset++) {
+                const date = new Date(recordStartDate);
                 date.setDate(date.getDate() + dayOffset);
 
                 const roomsSold = randomInt(20, 200);
@@ -200,16 +207,19 @@ async function seed() {
             }
         }
         const savedRecords = (await Record.insertMany(recordDocs)) as any[];
-        console.log(`Inserted ${savedRecords.length} time series records (90 days × 10 hotels)`);
+        console.log(`Inserted ${savedRecords.length} time series records (${recordDaysCount} days × ${savedHotels.length} hotels for 1 year back from today)`);
 
-        // Create time series Forecast data (one entry per day for 30 future days per hotel)
+        // Create time series Forecast data (one entry per day for 1 year forward from today per hotel)
         const forecastDocs: any[] = [];
-        const forecastBaseDate = new Date();
+        const forecastStartDate = new Date(today);
+        forecastStartDate.setDate(forecastStartDate.getDate() + 1); // Start tomorrow
+        const forecastDays = 365; // 1 year forward
 
         for (let hotelIdx = 0; hotelIdx < savedHotels.length; hotelIdx++) {
             const hotel = savedHotels[hotelIdx] as any;
-            for (let dayOffset = 1; dayOffset <= 30; dayOffset++) {
-                const date = new Date(forecastBaseDate);
+            // Generate forecast for 365 days into the future
+            for (let dayOffset = 0; dayOffset < forecastDays; dayOffset++) {
+                const date = new Date(forecastStartDate);
                 date.setDate(date.getDate() + dayOffset);
 
                 const roomSold = randomInt(20, 200);
@@ -227,7 +237,7 @@ async function seed() {
             }
         }
         const savedForecasts = (await Forecast.insertMany(forecastDocs)) as any[];
-        console.log(`Inserted ${savedForecasts.length} time series forecast entries (30 days × 10 hotels)`);
+        console.log(`Inserted ${savedForecasts.length} time series forecast entries (${forecastDays} days × ${savedHotels.length} hotels for 1 year forward from today)`);
 
         // Create 10 LastTrain entries (one per hotel)
         const lastTrainDocs: any[] = [];

@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type {RootState, AppDispatch} from '../../redux/store';
+import { fetchUsersByHotel, updateUserData, deleteUserData } from '../../redux/services/api';
 import '../../stylesheet/ui/component-ui-user-table.css';
 
 interface UserTableProps {
     hotelId: string;
-}
-
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: 'owner' | 'manager';
 }
 
 interface EditFormData {
@@ -19,10 +15,10 @@ interface EditFormData {
 }
 
 const UserTable: React.FC<UserTableProps> = ({ hotelId }) => {
-    const [users, setUsers] = useState<User[]>([]);
-    const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch<AppDispatch>();
+    const { users, loading, error } = useSelector((state: RootState) => state.users);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [selectedUser, setSelectedUser] = useState<any | null>(null);
     const [formData, setFormData] = useState<EditFormData>({
         name: '',
         email: '',
@@ -30,34 +26,12 @@ const UserTable: React.FC<UserTableProps> = ({ hotelId }) => {
     });
 
     useEffect(() => {
-        // Fetch users for this hotel
-        const fetchUsers = async () => {
-            try {
-                setLoading(true);
-                // Replace with your actual API call
-                // const response = await fetch(`/api/hotels/${hotelId}/users`);
-                // const data = await response.json();
-                // setUsers(data);
+        if (hotelId) {
+            dispatch(fetchUsersByHotel(hotelId) as any);
+        }
+    }, [hotelId, dispatch]);
 
-                // Temporary mock data
-                setUsers([
-                    { id: '1', name: 'Owner 1', email: 'owner1@example.com', role: 'owner' },
-                    { id: '2', name: 'Manager 1', email: 'manager1@example.com', role: 'manager' },
-                    { id: '3', name: 'Owner 2', email: 'owner2@example.com', role: 'owner' },
-                    { id: '4', name: 'Manager 2', email: 'manager2@example.com', role: 'manager' },
-                    { id: '5', name: 'Owner 3', email: 'owner3@example.com', role: 'owner' }
-                ]);
-            } catch (error) {
-                console.error('Error fetching users:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUsers();
-    }, [hotelId]);
-
-    const handleEdit = (user: User) => {
+    const handleEdit = (user: any) => {
         setSelectedUser(user);
         setFormData({
             name: user.name,
@@ -69,7 +43,9 @@ const UserTable: React.FC<UserTableProps> = ({ hotelId }) => {
 
     const handleDelete = (userId: string) => {
         if (window.confirm('Are you sure you want to delete this user?')) {
-            console.log('Delete user:', userId);
+            dispatch(deleteUserData(userId) as any).catch((err: any) => {
+                console.error('Delete error:', err);
+            });
         }
     };
 
@@ -82,8 +58,22 @@ const UserTable: React.FC<UserTableProps> = ({ hotelId }) => {
     };
 
     const handleSave = () => {
-        console.log('Save user:', selectedUser?.id, formData);
-        setIsDialogOpen(false);
+        if (selectedUser && selectedUser.id) {
+            const updatePayload = {
+                name: formData.name,
+                email: formData.email,
+                ...(formData.password && { password: formData.password })
+            };
+            dispatch(updateUserData(selectedUser.id, updatePayload) as any)
+                .then(() => {
+                    setIsDialogOpen(false);
+                    // Refresh users list
+                    dispatch(fetchUsersByHotel(hotelId) as any);
+                })
+                .catch((err: any) => {
+                    console.error('Update error:', err);
+                });
+        }
     };
 
     const handleCancel = () => {
@@ -92,6 +82,10 @@ const UserTable: React.FC<UserTableProps> = ({ hotelId }) => {
 
     if (loading) {
         return <div className="component-ui-user-table-loading">Loading users...</div>;
+    }
+
+    if (error) {
+        return <div className="component-ui-user-table-loading">Error: {error}</div>;
     }
 
     return (

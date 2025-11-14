@@ -12,6 +12,9 @@ import authRoutes from "./routes/auth.route";
 import hotelRoutes from "./routes/hotel.route";
 import adminDashboardRoutes from "./routes/admin.dashboard.route";
 import uploadRoutes from "./routes/upload.route";
+import userRoutes from "./routes/user.route";
+import recordRoutes from "./routes/records.route";
+import forecastRoutes from "./routes/forcast.route";
 import { comprehensiveSecurityMiddleware, securityHeadersMiddleware } from './security/securityMiddleware';
 
 dotenv.config();
@@ -37,6 +40,9 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/hotels', hotelRoutes);
 app.use('/api/v1/admin/dashboard', adminDashboardRoutes);
 app.use('/api/v1/upload', uploadRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/records', recordRoutes);
+app.use('/api/v1/forecast', forecastRoutes);
 
 // Basic route
 app.get("/", (req, res) => {

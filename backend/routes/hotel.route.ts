@@ -1,6 +1,6 @@
 // @ts-ignore
 import express from 'express';
-import { addHotel, getRecentlyAddedHotels, searchHotels, getAllHotels } from '../controllers/hotel.controller';
+import { addHotel, getRecentlyAddedHotels, searchHotels, getAllHotels, getHotelGeneralInfo } from '../controllers/hotel.controller';
 import { protect, adminOnly } from '../middleware/auth.middleware';
 
 const router = express.Router();
@@ -284,5 +284,58 @@ router.post('/search', protect, searchHotels);
  *                         type: string
  */
 router.get('/', protect, getAllHotels);
+
+/**
+ * @swagger
+ * /api/v1/hotels/general-info/{hotelId}:
+ *   get:
+ *     summary: Get hotel general information
+ *     tags: [Hotels]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: hotelId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Hotel ID
+ *     responses:
+ *       200:
+ *         description: Hotel general information retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 hotel:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     contactNumber:
+ *                       type: string
+ *                     plotNo:
+ *                       type: string
+ *                     streetName:
+ *                       type: string
+ *                     city:
+ *                       type: string
+ *                     state:
+ *                       type: string
+ *                     pincode:
+ *                       type: string
+ *       404:
+ *         description: Hotel not found
+ *       400:
+ *         description: Invalid input
+ */
+router.get('/general-info/:hotelId', protect, getHotelGeneralInfo);
 
 export default router;

@@ -316,3 +316,45 @@ export const getAllHotels = async (req: Request, res: Response) => {
         });
     }
 };
+
+/**
+ * Get hotel general information
+ */
+export const getHotelGeneralInfo = async (req: Request, res: Response) => {
+    try {
+        const { hotelId } = req.params;
+
+        if (!hotelId) {
+            throw new ApiError('Hotel ID is required', 400);
+        }
+
+        const hotel = await Hotel.findById(hotelId).select(
+            'name email contactNumber plotNo streetName city state pincode'
+        );
+
+        if (!hotel) {
+            throw new ApiError('Hotel not found', 404);
+        }
+
+        res.status(200).json({
+            message: 'Hotel general information retrieved successfully',
+            hotel: {
+                id: hotel._id,
+                name: hotel.name,
+                email: hotel.email,
+                contactNumber: hotel.contactNumber,
+                plotNo: hotel.plotNo,
+                streetName: hotel.streetName,
+                city: hotel.city,
+                state: hotel.state,
+                pincode: hotel.pincode
+            }
+        });
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).json({
+            message: error.message || 'An unexpected error occurred'
+        });
+    }
+};
+

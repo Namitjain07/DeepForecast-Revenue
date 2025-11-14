@@ -13,6 +13,18 @@ export interface Hotel {
     ownerName: string;
 }
 
+export interface HotelGeneralInfo {
+    id: string;
+    name: string;
+    email: string;
+    contactNumber: string;
+    plotNo: string;
+    streetName: string;
+    city: string;
+    state: string;
+    pincode: string;
+}
+
 export interface RecentHotel {
     id: string;
     hotelName: string;
@@ -40,6 +52,7 @@ interface HotelState {
     error: string | null;
     searchResults: Hotel[];
     searchPagination: PaginationInfo | null;
+    generalInfo: HotelGeneralInfo | null;
 }
 
 const initialState: HotelState = {
@@ -50,6 +63,7 @@ const initialState: HotelState = {
     error: null,
     searchResults: [],
     searchPagination: null,
+    generalInfo: null,
 };
 
 const hotelSlice = createSlice({
@@ -118,6 +132,26 @@ const hotelSlice = createSlice({
         clearError: (state) => {
             state.error = null;
         },
+
+        // General Info
+        getGeneralInfoStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        getGeneralInfoSuccess: (state, action: PayloadAction<HotelGeneralInfo>) => {
+            state.loading = false;
+            state.generalInfo = action.payload;
+            state.error = null;
+        },
+        getGeneralInfoFailure: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+        resetGeneralInfo: (state) => {
+            state.generalInfo = null;
+            state.loading = false;
+            state.error = null;
+        },
     },
 });
 
@@ -134,6 +168,10 @@ export const {
     searchHotelsFailure,
     clearSearch,
     clearError,
+    getGeneralInfoStart,
+    getGeneralInfoSuccess,
+    getGeneralInfoFailure,
+    resetGeneralInfo,
 } = hotelSlice.actions;
 
 export default hotelSlice.reducer;

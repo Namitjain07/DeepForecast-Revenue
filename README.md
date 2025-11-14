@@ -95,6 +95,7 @@ npm run dev
 # Frontend
 cd frontend
 npm run dev
+npx ts-node script.ts
 ```
 
 ## User Roles and Permissions

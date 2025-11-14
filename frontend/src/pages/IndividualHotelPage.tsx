@@ -4,7 +4,8 @@ import AdminNavbar from '../components/dashboard/AdminNavbar';
 import GeneralInfo from '../components/IndividualHotelPage/GeneralInfo';
 import UserTable from '../components/IndividualHotelPage/UserTable';
 import RecentRecords from '../components/IndividualHotelPage/RecentRecords';
-import DownloadCSV from '../components/IndividualHotelPage/DownloadCSV';
+import DownloadRecordCSV from '../components/IndividualHotelPage/DownloadRecordCSV.tsx';
+import DownloadForcastCSV from '../components/IndividualHotelPage/DownloadForcastCSV.tsx';
 import RevenueGraph from '../components/IndividualHotelPage/RevenueGraph';
 import RoomSoldGraph from '../components/IndividualHotelPage/RoomSoldGraph';
 import ArrivalRoomGraph from '../components/IndividualHotelPage/ArrivalRoomGraph';
@@ -49,7 +50,11 @@ const IndividualHotelPage: React.FC = () => {
                     </section>
 
                     <section className="page-individual-hotel-section">
-                        <DownloadCSV hotelId={hotelId} />
+                        <DownloadRecordCSV hotelId={hotelId} />
+                    </section>
+
+                    <section className="page-individual-hotel-section">
+                        <DownloadForcastCSV hotelId={hotelId} />
                     </section>
 
                     <div className="page-individual-hotel-graphs-grid">
