@@ -1,11 +1,11 @@
-.component-ui-departure-room-container {
+.component-ui-departure-room-graph-container {
     width: 100%;
     background-color: white;
     border-radius: 8px;
     padding: 20px;
 }
 
-.component-ui-departure-room-header {
+.component-ui-departure-room-graph-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -14,20 +14,20 @@
     gap: 16px;
 }
 
-.component-ui-departure-room-title {
+.component-ui-departure-room-graph-title {
     font-size: 18px;
     font-weight: 600;
     color: #1a1a1a;
     margin: 0;
 }
 
-.component-ui-departure-room-toggle {
+.component-ui-departure-room-graph-toggle {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-.component-ui-departure-room-toggle-btn {
+.component-ui-departure-room-graph-toggle-btn {
     padding: 6px 14px;
     border: 1px solid #e0e0e0;
     background-color: white;
@@ -39,24 +39,24 @@
     transition: all 0.2s ease;
 }
 
-.component-ui-departure-room-toggle-btn:hover {
+.component-ui-departure-room-graph-toggle-btn:hover {
     border-color: #1976d2;
     color: #1976d2;
 }
 
-.component-ui-departure-room-toggle-btn.active {
+.component-ui-departure-room-graph-toggle-btn.active {
     background-color: #1976d2;
     color: white;
     border-color: #1976d2;
 }
 
 @media (max-width: 768px) {
-    .component-ui-departure-room-header {
+    .component-ui-departure-room-graph-header {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .component-ui-departure-room-toggle {
+    .component-ui-departure-room-graph-toggle {
         width: 100%;
     }
 }
