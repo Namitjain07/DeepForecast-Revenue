@@ -538,3 +538,57 @@ export const getOOOForcastByPeriod = async (req: Request, res: Response) => {
         });
     }
 };
+
+export const getSingleDayForecast = async (req: Request, res: Response) => {
+    try {
+        const { hotelId, date } = req.params;
+
+        if (!hotelId || !date) {
+            throw new ApiError('Hotel ID and date are required', 400);
+        }
+
+        // Validate date format
+        const forecastDate = new Date(date);
+        if (isNaN(forecastDate.getTime())) {
+            throw new ApiError('Invalid date format. Use ISO 8601 format (YYYY-MM-DD)', 400);
+        }
+
+        // Set the date to start of day
+        const startOfDay = new Date(forecastDate);
+        startOfDay.setHours(0, 0, 0, 0);
+
+        // Set the date to end of day
+        // const endOfDay = new Date(forecastDate);
+        // endOfDay.setHours(23, 59, 59, 999);
+
+        const forecast = await Forecast.findOne({
+            hotelId,
+            date: { $gte: startOfDay}
+        }).select(
+            'hotelId date revenue roomSold arrivalRoom departureRoom oooRoom'
+        );
+
+        if (!forecast) {
+            throw new ApiError('No forecast data found for this date', 404);
+        }
+
+        res.status(200).json({
+            message: 'Forecast data retrieved successfully',
+            forecast: {
+                id: forecast._id,
+                hotelId: forecast.hotelId,
+                date: forecast.date,
+                revenue: forecast.revenue,
+                roomSold: forecast.roomSold,
+                arrivalRoom: forecast.arrivalRoom,
+                departureRoom: forecast.departureRoom,
+                oooRoom: forecast.oooRoom
+            }
+        });
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).json({
+            message: error.message || 'An unexpected error occurred'
+        });
+    }
+};

@@ -13,10 +13,36 @@ interface AuthState {
     error: string | null;
 }
 
+// Helper function to get persisted auth state
+const getPersistedAuthState = () => {
+    try {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+
+        if (token && user) {
+            return {
+                token,
+                user: JSON.parse(user),
+                isAuthenticated: true,
+            };
+        }
+    } catch (error) {
+        console.error('Error retrieving persisted auth state:', error);
+    }
+
+    return {
+        token: null,
+        user: null,
+        isAuthenticated: false,
+    };
+};
+
+const persistedState = getPersistedAuthState();
+
 const initialState: AuthState = {
-    token: localStorage.getItem('token'),
-    user: null,
-    isAuthenticated: false,
+    token: persistedState.token,
+    user: persistedState.user,
+    isAuthenticated: persistedState.isAuthenticated,
     loading: false,
     error: null,
 };
@@ -34,7 +60,10 @@ const authSlice = createSlice({
             state.isAuthenticated = true;
             state.token = action.payload.token;
             state.user = action.payload.user;
+
+            // Persist to localStorage
             localStorage.setItem('token', action.payload.token);
+            localStorage.setItem('user', JSON.stringify(action.payload.user));
         },
         loginFailure: (state, action: PayloadAction<string>) => {
             state.loading = false;
@@ -42,15 +71,29 @@ const authSlice = createSlice({
             state.isAuthenticated = false;
             state.token = null;
             state.user = null;
+
+            // Clear localStorage
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
         },
         logout: (state) => {
             state.token = null;
             state.user = null;
             state.isAuthenticated = false;
+
+            // Clear localStorage
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
+        },
+        // Restore auth state from localStorage on app initialization
+        restoreAuthState: (state) => {
+            const persistedState = getPersistedAuthState();
+            state.token = persistedState.token;
+            state.user = persistedState.user;
+            state.isAuthenticated = persistedState.isAuthenticated;
         },
     },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout, restoreAuthState } = authSlice.actions;
 export default authSlice.reducer;

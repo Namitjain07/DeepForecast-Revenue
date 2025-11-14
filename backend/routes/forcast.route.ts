@@ -9,7 +9,8 @@ import {
     getRoomSoldForcastByPeriod,
     getArrivalForcastByPeriod,
     getDepartureForcastByPeriod,
-    getOOOForcastByPeriod
+    getOOOForcastByPeriod,
+    getSingleDayForecast
 } from '../controllers/forcast.controller';
 import { protect } from '../middleware/auth.middleware';
 
@@ -455,6 +456,67 @@ router.get('/departure/:hotelId', protect, getDepartureForcastByPeriod);
  *         description: No forecast data found
  */
 router.get('/ooo/:hotelId', protect, getOOOForcastByPeriod);
+
+/**
+ * @swagger
+ * /api/v1/forecast/day/{hotelId}/{date}:
+ *   get:
+ *     summary: Get forecast data for a specific day
+ *     description: Retrieve detailed forecast data for a hotel on a specific date
+ *     tags: [Forecast]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: hotelId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Hotel ID
+ *       - in: path
+ *         name: date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: true
+ *         description: Date in YYYY-MM-DD format
+ *     responses:
+ *       200:
+ *         description: Forecast data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 forecast:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     hotelId:
+ *                       type: string
+ *                     date:
+ *                       type: string
+ *                       format: date-time
+ *                     revenue:
+ *                       type: number
+ *                     roomSold:
+ *                       type: number
+ *                     arrivalRoom:
+ *                       type: number
+ *                     departureRoom:
+ *                       type: number
+ *                     oooRoom:
+ *                       type: number
+ *
+ *       404:
+ *         description: No forecast data found for this date
+ *       400:
+ *         description: Invalid input
+ */
+router.get('/day/:hotelId/:date', protect, getSingleDayForecast);
 
 export default router;
 

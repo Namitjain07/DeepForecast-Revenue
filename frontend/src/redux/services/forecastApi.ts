@@ -127,3 +127,25 @@ export const downloadForecastCSV = (
     }
 };
 
+/**
+ * Fetch forecast data for a specific day
+ */
+export const fetchSingleDayForecast = (hotelId: string, date: string) => async () => {
+    try {
+        const response = await axios.get(
+            `${API_URL}/forecast/day/${hotelId}/${date}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Failed to fetch forecast data';
+        console.error('Single day forecast error:', message);
+        throw error;
+    }
+};
+

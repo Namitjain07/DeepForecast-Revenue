@@ -358,3 +358,118 @@ export const getHotelGeneralInfo = async (req: Request, res: Response) => {
     }
 };
 
+/**
+ * Get dashboard stats for a hotel (Total Revenue, Rooms Sold, Avg Occupancy for last 30 days)
+ */
+export const getDashboardStats = async (req: Request, res: Response) => {
+    try {
+        const { hotelId } = req.params;
+
+        if (!hotelId) {
+            throw new ApiError('Hotel ID is required', 400);
+        }
+
+        // Import Record model
+        const Record = require('../models/Record').default || require('../models/Record');
+
+        // Calculate last 30 days date range
+        const today = new Date();
+        const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+        // Get records for last 30 days
+        const records = await Record.find({
+            hotelId,
+            date: { $gte: thirtyDaysAgo, $lte: today }
+        }).select('roomRevenue roomsSold occupancyPercentage');
+
+        if (!records || records.length === 0) {
+            return res.status(200).json({
+                message: 'Dashboard stats retrieved successfully',
+                stats: {
+                    totalRevenue: 0,
+                    totalRoomsSold: 0,
+                    avgOccupancyRate: 0,
+                    period: 'Last 30 days'
+                }
+            });
+        }
+
+        // Calculate stats
+        const totalRevenue = records.reduce((sum: number, record: any) => sum + (record.roomRevenue || 0), 0);
+        const totalRoomsSold = records.reduce((sum: number, record: any) => sum + (record.roomsSold || 0), 0);
+        const avgOccupancyRate = records.length > 0
+            ? records.reduce((sum: number, record: any) => sum + (record.occupancyPercentage || 0), 0) / records.length
+            : 0;
+
+        res.status(200).json({
+            message: 'Dashboard stats retrieved successfully',
+            stats: {
+                totalRevenue: Math.round(totalRevenue),
+                totalRoomsSold,
+                avgOccupancyRate: parseFloat(avgOccupancyRate.toFixed(2)),
+                period: 'Last 30 days',
+                recordsCount: records.length
+            }
+        });
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).json({
+            message: error.message || 'An unexpected error occurred'
+        });
+    }
+};
+
+export const updateHotelInfo = async (req: Request, res: Response) => {
+    try {
+        const { hotelId } = req.params;
+        const { name, email, contactNumber, plotNo, streetName, city, state, pincode } = req.body;
+
+        if (!hotelId) {
+            throw new ApiError('Hotel ID is required', 400);
+        }
+
+        // Validate required fields
+        if (!name || !email || !contactNumber || !plotNo || !streetName || !city || !state || !pincode) {
+            throw new ApiError('All fields are required', 400);
+        }
+
+        const updatedHotel = await Hotel.findByIdAndUpdate(
+            hotelId,
+            {
+                name,
+                email,
+                contactNumber,
+                plotNo,
+                streetName,
+                city,
+                state,
+                pincode
+            },
+            { new: true, runValidators: true }
+        ).select('name email contactNumber plotNo streetName city state pincode');
+
+        if (!updatedHotel) {
+            throw new ApiError('Hotel not found', 404);
+        }
+
+        res.status(200).json({
+            message: 'Hotel information updated successfully',
+            hotel: {
+                id: updatedHotel._id,
+                name: updatedHotel.name,
+                email: updatedHotel.email,
+                contactNumber: updatedHotel.contactNumber,
+                plotNo: updatedHotel.plotNo,
+                streetName: updatedHotel.streetName,
+                city: updatedHotel.city,
+                state: updatedHotel.state,
+                pincode: updatedHotel.pincode
+            }
+        });
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).json({
+            message: error.message || 'An unexpected error occurred'
+        });
+    }
+};

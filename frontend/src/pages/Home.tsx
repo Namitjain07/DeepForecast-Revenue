@@ -23,10 +23,10 @@ function Home() {
                     navigate("/admin-dashboard");
                     break;
                 case "owner":
-                    navigate("/owner-dashboard");
+                    navigate("/user-dashboard");
                     break;
                 case "manager":
-                    navigate("/manager-dashboard");
+                    navigate("/user-dashboard");
                     break;
                 default:
                     setError("Invalid role");
@@ -79,8 +79,8 @@ function Home() {
                     <div className="page-home__demo">
                         <p><strong>Demo Credentials:</strong></p>
                         <p><b>Admin:</b> admin1@example.com / password123</p>
-                        <p><b>Owner:</b> user2@example.com / userpass123</p>
-                        <p><b>Manager:</b> user1@example.com / userpass123</p>
+                        <p><b>Owner:</b> owner1@example.com / ownerpass123</p>
+                        <p><b>Manager:</b> manager1@example.com / managerpass123</p>
                     </div>
                 </div>
 

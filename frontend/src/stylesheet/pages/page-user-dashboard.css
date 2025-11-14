@@ -1,0 +1,192 @@
+/* filepath: c:\Btech\Sem 7\Revenue_Prediction_Website\frontend\src\stylesheet\pages\page-user-dashboard.css */
+
+.page-user-dashboard {
+    padding: 24px;
+    background-color: #f9fafb;
+    min-height: 100vh;
+}
+
+.page-user-dashboard-header {
+    margin-bottom: 32px;
+}
+
+.page-user-dashboard-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 2rem;
+    color: #111827;
+    font-weight: 700;
+}
+
+.page-user-dashboard-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 1rem;
+}
+
+/* Stat Cards Container */
+.page-user-dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.page-user-dashboard-stat-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.page-user-dashboard-stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.page-user-dashboard-stat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.page-user-dashboard-stat-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.page-user-dashboard-stat-card-icon {
+    font-size: 1.5rem;
+}
+
+.page-user-dashboard-stat-card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.page-user-dashboard-stat-card-value-small {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.page-user-dashboard-stat-card-description {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+/* Revenue Stat Card - Green accent */
+.page-user-dashboard-stat-card.revenue {
+    border-left: 4px solid #10b981;
+}
+
+.page-user-dashboard-stat-card.revenue .page-user-dashboard-stat-card-icon {
+    color: #10b981;
+}
+
+/* Rooms Sold Stat Card - Blue accent */
+.page-user-dashboard-stat-card.rooms {
+    border-left: 4px solid #3b82f6;
+}
+
+.page-user-dashboard-stat-card.rooms .page-user-dashboard-stat-card-icon {
+    color: #3b82f6;
+}
+
+/* Occupancy Rate Stat Card - Purple accent */
+.page-user-dashboard-stat-card.occupancy {
+    border-left: 4px solid #a855f7;
+}
+
+.page-user-dashboard-stat-card.occupancy .page-user-dashboard-stat-card-icon {
+    color: #a855f7;
+}
+
+/* Recent Records Section */
+.page-user-dashboard-recent-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.page-user-dashboard-recent-section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .page-user-dashboard-stats {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+    }
+
+    .page-user-dashboard-stat-card {
+        padding: 16px;
+    }
+
+    .page-user-dashboard-stat-card-value {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-user-dashboard {
+        padding: 16px;
+    }
+
+    .page-user-dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .page-user-dashboard-stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .page-user-dashboard-stat-card {
+        padding: 16px;
+    }
+
+    .page-user-dashboard-stat-card-value {
+        font-size: 1.5rem;
+    }
+
+    .page-user-dashboard-recent-section {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-user-dashboard {
+        padding: 12px;
+    }
+
+    .page-user-dashboard-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .page-user-dashboard-stat-card-value {
+        font-size: 1.25rem;
+    }
+
+    .page-user-dashboard-stat-card-title {
+        font-size: 0.8rem;
+    }
+
+    .page-user-dashboard-stat-card-description {
+        font-size: 0.75rem;
+    }
+}
+

@@ -1,6 +1,6 @@
 // @ts-ignore
 import express from 'express';
-import { addHotel, getRecentlyAddedHotels, searchHotels, getAllHotels, getHotelGeneralInfo } from '../controllers/hotel.controller';
+import { addHotel, getRecentlyAddedHotels, searchHotels, getAllHotels, getHotelGeneralInfo, getDashboardStats, updateHotelInfo } from '../controllers/hotel.controller';
 import { protect, adminOnly } from '../middleware/auth.middleware';
 
 const router = express.Router();
@@ -337,5 +337,140 @@ router.get('/', protect, getAllHotels);
  *         description: Invalid input
  */
 router.get('/general-info/:hotelId', protect, getHotelGeneralInfo);
+
+/**
+ * @swagger
+ * /api/v1/hotels/dashboard-stats/{hotelId}:
+ *   get:
+ *     summary: Get dashboard stats for a hotel (Total Revenue, Rooms Sold, Avg Occupancy for last 30 days)
+ *     tags: [Hotels]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: hotelId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Hotel ID
+ *     responses:
+ *       200:
+ *         description: Dashboard stats retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 stats:
+ *                   type: object
+ *                   properties:
+ *                     totalRevenue:
+ *                       type: number
+ *                       description: Total revenue for last 30 days
+ *                     totalRoomsSold:
+ *                       type: number
+ *                       description: Total rooms sold for last 30 days
+ *                     avgOccupancyRate:
+ *                       type: number
+ *                       description: Average occupancy rate for last 30 days
+ *                     period:
+ *                       type: string
+ *                       description: Period of the stats
+ *                     recordsCount:
+ *                       type: number
+ *                       description: Number of records used to calculate stats
+ *       404:
+ *         description: Hotel not found
+ *       400:
+ *         description: Invalid input
+ */
+router.get('/dashboard-stats/:hotelId', protect, getDashboardStats);
+
+/**
+ * @swagger
+ * /api/v1/hotels/update/{hotelId}:
+ *   put:
+ *     summary: Update hotel information
+ *     tags: [Hotels]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: hotelId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Hotel ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - contactNumber
+ *               - plotNo
+ *               - streetName
+ *               - city
+ *               - state
+ *               - pincode
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               contactNumber:
+ *                 type: string
+ *               plotNo:
+ *                 type: string
+ *               streetName:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               state:
+ *                 type: string
+ *               pincode:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Hotel information updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 hotel:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     contactNumber:
+ *                       type: string
+ *                     plotNo:
+ *                       type: string
+ *                     streetName:
+ *                       type: string
+ *                     city:
+ *                       type: string
+ *                     state:
+ *                       type: string
+ *                     pincode:
+ *                       type: string
+ *       404:
+ *         description: Hotel not found
+ *       400:
+ *         description: Invalid input
+ */
+router.put('/update/:hotelId', protect, updateHotelInfo);
 
 export default router;

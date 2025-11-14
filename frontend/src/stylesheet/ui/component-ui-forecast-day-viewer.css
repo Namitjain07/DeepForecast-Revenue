@@ -1,0 +1,294 @@
+/* filepath: c:\Btech\Sem 7\Revenue_Prediction_Website\frontend\src\stylesheet\ui\component-ui-forecast-day-viewer.css */
+
+.ui-component-forecast-day-viewer-container {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+    margin-top: 24px;
+}
+
+.ui-component-forecast-day-viewer-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 20px 0;
+}
+
+.ui-component-forecast-day-viewer-content {
+    padding: 0;
+}
+
+.ui-component-forecast-day-viewer-loading,
+.ui-component-forecast-day-viewer-empty,
+.ui-component-forecast-day-viewer-error {
+    padding: 24px;
+    text-align: center;
+    color: #6b7280;
+    font-weight: 500;
+    border-radius: 8px;
+    background: #f9fafb;
+}
+
+.ui-component-forecast-day-viewer-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+.ui-component-forecast-day-viewer-main {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 24px;
+}
+
+/* Calendar Section */
+.ui-component-forecast-day-calendar-section {
+    position: relative;
+}
+
+.ui-component-forecast-day-calendar-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.ui-component-forecast-day-calendar-header label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ui-component-forecast-day-toggle {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.ui-component-forecast-day-toggle:hover {
+    background: #1d4ed8;
+}
+
+.ui-component-forecast-day-calendar-dropdown {
+    position: absolute;
+    left: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    z-index: 100;
+    max-height: 600px;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.ui-component-forecast-day-calendar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ui-component-forecast-day-month-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.ui-component-forecast-day-nav-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.ui-component-forecast-day-nav-btn:hover:not(:disabled) {
+    background: #1d4ed8;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.ui-component-forecast-day-nav-btn:disabled {
+    background: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.ui-component-forecast-day-month-header {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111827;
+    text-align: center;
+    flex: 1;
+}
+
+.ui-component-forecast-day-month {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ui-component-forecast-day-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.ui-component-forecast-day-weekday {
+    text-align: center;
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 0.8rem;
+    padding: 4px;
+}
+
+.ui-component-forecast-day-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.ui-component-forecast-day-day {
+    aspect-ratio: 1;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #111827;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.ui-component-forecast-day-day:hover:not(:disabled) {
+    background: #eff6ff;
+    border-color: #2563eb;
+}
+
+.ui-component-forecast-day-day:disabled {
+    background: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.ui-component-forecast-day-day.ui-component-available {
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #166534;
+}
+
+.ui-component-forecast-day-day.ui-component-available:hover {
+    background: #dcfce7;
+}
+
+.ui-component-forecast-day-day.ui-component-selected {
+    background: #2563eb;
+    color: white;
+    border-color: #1d4ed8;
+    font-weight: 600;
+}
+
+.ui-component-forecast-day-other-month {
+    opacity: 0.3;
+}
+
+/* Details Section */
+.ui-component-forecast-day-details-section {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.ui-component-forecast-day-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.ui-component-forecast-day-detail-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ui-component-forecast-day-detail-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ui-component-forecast-day-detail-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .ui-component-forecast-day-viewer-main {
+        grid-template-columns: 1fr;
+    }
+
+    .ui-component-forecast-day-details-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .ui-component-forecast-day-viewer-container {
+        padding: 16px;
+    }
+
+    .ui-component-forecast-day-details-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ui-component-forecast-day-calendar {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .ui-component-forecast-day-viewer-container {
+        padding: 12px;
+    }
+
+    .ui-component-forecast-day-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ui-component-forecast-day-toggle {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+
+    .ui-component-forecast-day-detail-value {
+        font-size: 1.1rem;
+    }
+}
+

@@ -1,0 +1,286 @@
+/* filepath: c:\Btech\Sem 7\Revenue_Prediction_Website\frontend\src\stylesheet\ui\component-ui-user-navbar.css */
+
+.component-ui-user-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    padding: 12px 24px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.user-navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-navbar-logo {
+    background-color: #2563eb;
+    color: white;
+    border-radius: 8px;
+    padding: 6px;
+    font-size: 1.2rem;
+}
+
+.user-navbar-left h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #111827;
+    font-weight: 600;
+}
+
+.user-navbar-tabs {
+    display: flex;
+    gap: 12px;
+}
+
+.user-navbar-tab {
+    background: none;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: #374151;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.user-navbar-tab:hover {
+    background: #f3f4f6;
+}
+
+.user-navbar-tab.active {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.user-navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+
+.user-navbar-button {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.user-navbar-button:hover {
+    background-color: #1d4ed8;
+}
+
+.user-navbar-button:active {
+    background-color: #1e40af;
+}
+
+.user-navbar-avatar {
+    background: #2563eb;
+    color: white;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.user-navbar-avatar:hover {
+    background: #1d4ed8;
+}
+
+/* Profile Dialog Styles */
+.user-navbar-profile-dialog {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 280px;
+}
+
+.user-profile-dialog-content {
+    padding: 20px;
+}
+
+.user-profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 16px;
+}
+
+.user-profile-avatar-large {
+    background: #2563eb;
+    color: white;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+
+.user-profile-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #111827;
+    font-weight: 600;
+}
+
+.user-profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.user-info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.user-info-label {
+    font-weight: 500;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.user-info-value {
+    color: #111827;
+    font-weight: 600;
+    word-break: break-all;
+    text-align: right;
+    max-width: 150px;
+}
+
+.user-profile-logout-btn {
+    width: 100%;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.user-profile-logout-btn:hover {
+    background-color: #dc2626;
+}
+
+.user-profile-logout-btn:active {
+    background-color: #b91c1c;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .user-navbar-tabs {
+        gap: 8px;
+    }
+
+    .user-navbar-tab {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .component-ui-user-navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .user-navbar-left {
+        width: 100%;
+    }
+
+    .user-navbar-tabs {
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 6px;
+    }
+
+    .user-navbar-tab {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+
+    .user-navbar-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .user-navbar-button {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+
+    .user-navbar-profile-dialog {
+        right: auto;
+        left: 0;
+        top: 100%;
+        margin-top: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .component-ui-user-navbar {
+        padding: 8px 12px;
+    }
+
+    .user-navbar-left h2 {
+        font-size: 1rem;
+    }
+
+    .user-navbar-tabs {
+        gap: 4px;
+    }
+
+    .user-navbar-tab {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+
+    .user-navbar-button {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
+
+    .user-profile-avatar-large {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+    }
+
+    .user-profile-dialog-content {
+        padding: 16px;
+    }
+}
+

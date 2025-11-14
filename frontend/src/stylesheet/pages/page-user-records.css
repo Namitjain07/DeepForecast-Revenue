@@ -1,0 +1,106 @@
+/* filepath: c:\Btech\Sem 7\Revenue_Prediction_Website\frontend\src\stylesheet\pages\page-user-records.css */
+
+.page-user-records {
+    padding: 24px;
+    background-color: #f9fafb;
+    min-height: 100vh;
+}
+
+.page-user-records-header {
+    margin-bottom: 32px;
+}
+
+.page-user-records-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 2rem;
+    color: #111827;
+    font-weight: 700;
+}
+
+.page-user-records-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 1rem;
+}
+
+.page-user-records-container {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.page-user-records-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #111827;
+    padding: 24px 24px 16px 24px;
+    margin: 0;
+}
+
+.page-user-records-content {
+    padding: 0 24px 24px 24px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .page-user-records {
+        padding: 16px;
+    }
+
+    .page-user-records-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .page-user-records-title {
+        padding: 16px 16px 12px 16px;
+        font-size: 1.2rem;
+    }
+
+    .page-user-records-content {
+        padding: 0 16px 16px 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-user-records {
+        padding: 12px;
+    }
+
+    .page-user-records-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .page-user-records-title {
+        padding: 12px 12px 8px 12px;
+        font-size: 1.1rem;
+    }
+
+    .page-user-records-content {
+        padding: 0 12px 12px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-user-records {
+        padding: 8px;
+    }
+
+    .page-user-records-header h1 {
+        font-size: 1.1rem;
+    }
+
+    .page-user-records-header p {
+        font-size: 0.9rem;
+    }
+
+    .page-user-records-title {
+        padding: 8px 8px 4px 8px;
+        font-size: 1rem;
+    }
+
+    .page-user-records-content {
+        padding: 0 8px 8px 8px;
+    }
+}
+

@@ -145,3 +145,48 @@ export const fetchGeneralInfo = (hotelId: string) => async (dispatch: Dispatch) 
     }
 };
 
+/**
+ * Fetch hotel dashboard stats (Total Revenue, Rooms Sold, Avg Occupancy for last 30 days)
+ */
+export const fetchHotelDashboardStats = (hotelId: string) => async () => {
+    try {
+        const response = await axios.get(`${API_URL}/hotels/dashboard-stats/${hotelId}`, {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data.stats;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Failed to fetch hotel dashboard stats';
+        console.error('Hotel dashboard stats error:', message);
+        throw error;
+    }
+};
+
+/**
+ * Update hotel information
+ */
+export const updateHotelInfo = (hotelId: string, hotelData: any) => async (dispatch: Dispatch) => {
+    try {
+        dispatch(getGeneralInfoStart());
+        const response = await axios.put(
+            `${API_URL}/hotels/update/${hotelId}`,
+            hotelData,
+            {
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        dispatch(getGeneralInfoSuccess(response.data.hotel));
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Failed to update hotel info';
+        dispatch(getGeneralInfoFailure(message));
+        console.error('Update hotel info error:', message);
+        throw error;
+    }
+};
+
