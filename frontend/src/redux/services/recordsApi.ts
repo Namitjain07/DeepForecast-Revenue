@@ -4,9 +4,15 @@ import {
     getRecentRecordsStart,
     getRecentRecordsSuccess,
     getRecentRecordsFailure,
-    getDateRangeRecordsStart,
-    getDateRangeRecordsSuccess,
-    getDateRangeRecordsFailure,
+    addRecordsToHotelStart,
+    addRecordsToHotelSuccess,
+    addRecordsToHotelFailure,
+    fetchAvailableDatesStart,
+    fetchAvailableDatesSuccess,
+    fetchAvailableDatesFailure,
+    downloadRecordsCSVStart,
+    downloadRecordsCSVSuccess,
+    downloadRecordsCSVFailure,
 } from '../slices/recordsSlice';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
@@ -15,9 +21,45 @@ const getToken = () => localStorage.getItem('token');
 
 // ==================== RECORDS APIs ====================
 
+/**
+ * Add multiple records to a hotel from CSV/XLSX upload
+ */
+export const addRecordsToHotel = (data: { hotelId: string; records: any[] }) => async (dispatch: Dispatch) => {
+    try {
+        dispatch(addRecordsToHotelStart());
+        const response = await axios.post(`${API_URL}/records/add`, data, {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const records = response.data.records || [];
+        const count = response.data.count || records.length;
+
+        dispatch(addRecordsToHotelSuccess({
+            records: records,
+            count: count,
+        }));
+
+        return {
+            success: true,
+            count: count,
+            records: records,
+            message: response.data.message
+        };
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Failed to add records';
+        console.log('Error adding records:', error);
+
+        dispatch(addRecordsToHotelFailure(message));
+        throw error;
+    }
+};
+
 export const fetchAvailableDates = (hotelId: string) => async (dispatch: Dispatch) => {
     try {
-        dispatch(getDateRangeRecordsStart());
+        dispatch(fetchAvailableDatesStart());
         const response = await axios.get(`${API_URL}/records/available-dates/${hotelId}`, {
             headers: {
                 'Authorization': `Bearer ${getToken()}`,
@@ -26,14 +68,14 @@ export const fetchAvailableDates = (hotelId: string) => async (dispatch: Dispatc
         });
 
         const dates = response.data.dates || [];
-        dispatch(getDateRangeRecordsSuccess({
+        dispatch(fetchAvailableDatesSuccess({
             records: [],
             count: dates.length,
         }));
         return response.data;
     } catch (error: any) {
         const message = error.response?.data?.message || 'Failed to fetch available dates';
-        dispatch(getDateRangeRecordsFailure(message));
+        dispatch(fetchAvailableDatesFailure(message));
         throw error;
     }
 };
@@ -60,39 +102,7 @@ export const fetchRecentRecords = (hotelId: string) => async (dispatch: Dispatch
     }
 };
 
-export const fetchRecordsByDateRange = (
-    hotelId: string,
-    startDate: string,
-    endDate: string
-) => async (dispatch: Dispatch) => {
-    try {
-        dispatch(getDateRangeRecordsStart());
-        const response = await axios.post(
-            `${API_URL}/records/date-range`,
-            {
-                hotelId,
-                startDate,
-                endDate,
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${getToken()}`,
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-        const records = response.data.records || response.data;
-        dispatch(getDateRangeRecordsSuccess({
-            records,
-            count: Array.isArray(records) ? records.length : 0,
-        }));
-        return response.data;
-    } catch (error: any) {
-        const message = error.response?.data?.message || 'Failed to fetch records';
-        dispatch(getDateRangeRecordsFailure(message));
-        throw error;
-    }
-};
+
 
 export const downloadRecordsCSV = (
     hotelId: string,
@@ -100,7 +110,7 @@ export const downloadRecordsCSV = (
     endDate: string
 ) => async (dispatch: Dispatch) => {
     try {
-        dispatch(getDateRangeRecordsStart());
+        dispatch(downloadRecordsCSVStart());
 
         let allRecords: any[] = [];
         let page = 1;
@@ -149,7 +159,7 @@ export const downloadRecordsCSV = (
             'OOO Rooms',
             'Occupancy %',
             'Room Revenue',
-            'Avg Room Rate',
+            'ARR',
             'PAX',
             'Compliment Rooms',
             'House Use',
@@ -188,15 +198,14 @@ export const downloadRecordsCSV = (
         link.click();
         link.parentNode?.removeChild(link);
 
-        dispatch(getDateRangeRecordsSuccess({
+        dispatch(downloadRecordsCSVSuccess({
             records: allRecords,
             count: allRecords.length,
         }));
         return { records: allRecords, count: allRecords.length };
     } catch (error: any) {
         const message = error.response?.data?.message || error.message || 'Failed to download CSV';
-        dispatch(getDateRangeRecordsFailure(message));
+        dispatch(downloadRecordsCSVFailure(message));
         throw error;
     }
 };
-

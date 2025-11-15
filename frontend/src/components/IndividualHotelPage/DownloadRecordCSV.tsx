@@ -60,7 +60,7 @@ const DownloadRecordCSV: React.FC<DownloadCSVProps> = ({ hotelId }) => {
         try {
             await dispatch(downloadRecordsCSV(hotelId, startDate, endDate) as any);
         } catch (err: any) {
-            setDownloadError(err.message || 'Failed to download CSV');
+            setDownloadError(err.response?.data?.message || 'Failed to download CSV');
         } finally {
             setIsDownloading(false);
         }

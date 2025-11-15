@@ -152,6 +152,50 @@ const hotelSlice = createSlice({
             state.loading = false;
             state.error = null;
         },
+
+        // Add Hotel
+        addHotelStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        addHotelSuccess: (state, action: PayloadAction<Hotel>) => {
+            state.loading = false;
+            state.hotels.push(action.payload);
+            state.error = null;
+        },
+        addHotelFailure: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+
+        // Fetch Hotel Dashboard Stats
+        getDashboardStatsStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        getDashboardStatsSuccess: (state) => {
+            state.loading = false;
+            state.error = null;
+        },
+        getDashboardStatsFailure: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+
+        // Update Hotel Info
+        updateHotelInfoStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        updateHotelInfoSuccess: (state, action: PayloadAction<HotelGeneralInfo>) => {
+            state.loading = false;
+            state.generalInfo = action.payload;
+            state.error = null;
+        },
+        updateHotelInfoFailure: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
     },
 });
 
@@ -172,6 +216,15 @@ export const {
     getGeneralInfoSuccess,
     getGeneralInfoFailure,
     resetGeneralInfo,
+    addHotelStart,
+    addHotelSuccess,
+    addHotelFailure,
+    getDashboardStatsStart,
+    getDashboardStatsSuccess,
+    getDashboardStatsFailure,
+    updateHotelInfoStart,
+    updateHotelInfoSuccess,
+    updateHotelInfoFailure,
 } = hotelSlice.actions;
 
 export default hotelSlice.reducer;

@@ -14,6 +14,15 @@ import {
     getGeneralInfoStart,
     getGeneralInfoSuccess,
     getGeneralInfoFailure,
+    addHotelStart,
+    addHotelSuccess,
+    addHotelFailure,
+    getDashboardStatsStart,
+    getDashboardStatsSuccess,
+    getDashboardStatsFailure,
+    updateHotelInfoStart,
+    updateHotelInfoSuccess,
+    updateHotelInfoFailure,
 } from '../slices/hotelSlice';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
@@ -105,8 +114,9 @@ export const searchHotels = (searchTerm: string, page: number = 1, limit: number
     }
 };
 
-export const addHotel = (hotelData: any) => async () => {
+export const addHotel = (hotelData: any) => async (dispatch: Dispatch) => {
     try {
+        dispatch(addHotelStart());
         const response = await axios.post(
             `${API_URL}/hotels/add_hotel`,
             hotelData,
@@ -117,9 +127,11 @@ export const addHotel = (hotelData: any) => async () => {
                 },
             }
         );
+        dispatch(addHotelSuccess(response.data.hotel || response.data));
         return response.data;
     } catch (error: any) {
         const message = error.response?.data?.message || 'Failed to add hotel';
+        dispatch(addHotelFailure(message));
         console.error('Add hotel error:', message);
         throw error;
     }
@@ -148,17 +160,20 @@ export const fetchGeneralInfo = (hotelId: string) => async (dispatch: Dispatch) 
 /**
  * Fetch hotel dashboard stats (Total Revenue, Rooms Sold, Avg Occupancy for last 30 days)
  */
-export const fetchHotelDashboardStats = (hotelId: string) => async () => {
+export const fetchHotelDashboardStats = (hotelId: string) => async (dispatch: Dispatch) => {
     try {
+        dispatch(getDashboardStatsStart());
         const response = await axios.get(`${API_URL}/hotels/dashboard-stats/${hotelId}`, {
             headers: {
                 'Authorization': `Bearer ${getToken()}`,
                 'Content-Type': 'application/json',
             },
         });
+        dispatch(getDashboardStatsSuccess());
         return response.data.stats;
     } catch (error: any) {
         const message = error.response?.data?.message || 'Failed to fetch hotel dashboard stats';
+        dispatch(getDashboardStatsFailure(message));
         console.error('Hotel dashboard stats error:', message);
         throw error;
     }
@@ -169,7 +184,7 @@ export const fetchHotelDashboardStats = (hotelId: string) => async () => {
  */
 export const updateHotelInfo = (hotelId: string, hotelData: any) => async (dispatch: Dispatch) => {
     try {
-        dispatch(getGeneralInfoStart());
+        dispatch(updateHotelInfoStart());
         const response = await axios.put(
             `${API_URL}/hotels/update/${hotelId}`,
             hotelData,
@@ -180,13 +195,15 @@ export const updateHotelInfo = (hotelId: string, hotelData: any) => async (dispa
                 },
             }
         );
-        dispatch(getGeneralInfoSuccess(response.data.hotel));
+        dispatch(updateHotelInfoSuccess(response.data.hotel));
         return response.data;
     } catch (error: any) {
         const message = error.response?.data?.message || 'Failed to update hotel info';
-        dispatch(getGeneralInfoFailure(message));
+        dispatch(updateHotelInfoFailure(message));
         console.error('Update hotel info error:', message);
         throw error;
     }
 };
+
+
 

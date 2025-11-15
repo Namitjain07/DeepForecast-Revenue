@@ -1,6 +1,7 @@
 // @ts-ignore
 import express from 'express';
 import {
+    addRecords,
     getRecentRecords,
     getRecordsByDateRange,
     getRecordsByPeriod,
@@ -16,6 +17,146 @@ import { protect } from '../middleware/auth.middleware';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/v1/records/add:
+ *   post:
+ *     summary: Add multiple records for a hotel in a single request
+ *     tags: [Records]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - hotelId
+ *               - records
+ *             properties:
+ *               hotelId:
+ *                 type: string
+ *                 description: Hotel ID
+ *               records:
+ *                 type: array
+ *                 description: Array of record objects
+ *                 minItems: 1
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - date
+ *                     - roomsSold
+ *                     - day
+ *                     - arrivalRooms
+ *                     - departureRooms
+ *                     - oooRooms
+ *                     - occupancyPercentage
+ *                     - roomRevenue
+ *                     - averageRoomRate
+ *                     - pax
+ *                     - complimentRooms
+ *                     - houseUse
+ *                     - individualConfirm
+ *                     - totalRoomInventory
+ *                   properties:
+ *                     date:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Record date (ISO 8601 format)
+ *                     roomsSold:
+ *                       type: number
+ *                       description: Number of rooms sold
+ *                     day:
+ *                       type: string
+ *                       description: Day of week (e.g., Monday, Tuesday)
+ *                     arrivalRooms:
+ *                       type: number
+ *                       description: Number of arrival rooms
+ *                     departureRooms:
+ *                       type: number
+ *                       description: Number of departure rooms
+ *                     oooRooms:
+ *                       type: number
+ *                       description: Number of out of order rooms
+ *                     occupancyPercentage:
+ *                       type: number
+ *                       description: Occupancy percentage
+ *                     roomRevenue:
+ *                       type: number
+ *                       description: Room revenue
+ *                     averageRoomRate:
+ *                       type: number
+ *                       description: Average room rate
+ *                     pax:
+ *                       type: number
+ *                       description: Number of guests
+ *                     complimentRooms:
+ *                       type: number
+ *                       description: Number of compliment rooms
+ *                     houseUse:
+ *                       type: number
+ *                       description: Number of house use rooms
+ *                     individualConfirm:
+ *                       type: number
+ *                       description: Individual confirmations
+ *                     totalRoomInventory:
+ *                       type: number
+ *                       description: Total room inventory
+ *     responses:
+ *       201:
+ *         description: Records added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 count:
+ *                   type: number
+ *                 records:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       date:
+ *                         type: string
+ *                         format: date-time
+ *                       roomsSold:
+ *                         type: number
+ *                       day:
+ *                         type: string
+ *                       arrivalRooms:
+ *                         type: number
+ *                       departureRooms:
+ *                         type: number
+ *                       oooRooms:
+ *                         type: number
+ *                       occupancyPercentage:
+ *                         type: number
+ *                       roomRevenue:
+ *                         type: number
+ *                       averageRoomRate:
+ *                         type: number
+ *                       pax:
+ *                         type: number
+ *                       complimentRooms:
+ *                         type: number
+ *                       houseUse:
+ *                         type: number
+ *                       individualConfirm:
+ *                         type: number
+ *                       totalRoomInventory:
+ *                         type: number
+ *       400:
+ *         description: Invalid input or missing required fields
+ *       500:
+ *         description: Server error
+ */
+router.post('/add', protect, addRecords);
 /**
  * @swagger
  * /api/v1/records/recent/{hotelId}:

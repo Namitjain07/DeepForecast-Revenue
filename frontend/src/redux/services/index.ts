@@ -18,6 +18,9 @@ export * from './recordsMetricApi';
 export * from './forecastApi';
 export * from './forecastMetricApi';
 
+// ==================== MODEL TRAIN APIs ====================
+export * from './modelTrainAPI';
+
 // Export API URL and getToken for other uses if needed
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 export const getToken = () => localStorage.getItem('token');

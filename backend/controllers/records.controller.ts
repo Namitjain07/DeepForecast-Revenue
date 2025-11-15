@@ -11,6 +11,211 @@ class ApiError extends Error {
 }
 
 /**
+ * Add multiple records for a hotel in a single request
+ */
+export const addRecords = async (req: Request, res: Response) => {
+    try {
+        const { hotelId, records: recordsData } = req.body;
+
+        console.log('1.',recordsData)
+
+        if (!hotelId) {
+            throw new ApiError('Hotel ID is required', 400);
+        }
+
+        if (!recordsData || !Array.isArray(recordsData) || recordsData.length === 0) {
+            throw new ApiError('Records array is required and must not be empty', 400);
+        }
+
+        // Get the last stored record date for this hotel
+        const lastStoredRecord = await Record.findOne({ hotelId })
+            .sort({ date: -1 })
+            .select('date');
+
+        // Validate and prepare records
+        const preparedRecords = recordsData.map((record: any, index: number) => {
+            // Validate required fields
+            const requiredFields = ['date', 'roomsSold', 'day', 'arrivalRooms', 'departureRooms', 'oooRooms', 'occupancyPercentage', 'roomRevenue', 'averageRoomRate', 'pax', 'complimentRooms', 'houseUse', 'individualConfirm', 'totalRoomInventory'];
+
+            const missingFields = requiredFields.filter(field => record[field] === undefined || record[field] === null);
+            if (missingFields.length > 0) {
+                throw new ApiError(`Record ${index + 1} is missing required fields: ${missingFields.join(', ')}`, 400);
+            }
+
+
+            let recordDate: Date;
+
+            if (typeof record.date === 'string') {
+                console.log("mew1");
+
+                // 🧠 Detect numeric strings like "45977" (Excel serial numbers)
+                if (!isNaN(Number(record.date)) && Number(record.date) > 10000 && Number(record.date) < 60000) {
+                    const serial = Number(record.date);
+                    const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // Excel base date
+                    const msPerDay = 24 * 60 * 60 * 1000;
+                    recordDate = new Date(excelEpoch.getTime() + serial * msPerDay);
+                } else {
+                    // Support for all 4 string formats
+                    const datePatterns = [
+                        /^(\d{2})[/-](\d{2})[/-](\d{4})$/, // DD-MM-YYYY or DD/MM/YYYY
+                        /^(\d{4})[/-](\d{2})[/-](\d{2})$/, // YYYY-MM-DD or YYYY/MM/DD
+                    ];
+
+                    let matched = false;
+
+                    for (const pattern of datePatterns) {
+                        const match = record.date.match(pattern);
+                        if (match) {
+                            matched = true;
+
+                            // Handle DD-MM-YYYY or DD/MM/YYYY
+                            if (pattern === datePatterns[0]) {
+                                const [_, day, month, year] = match;
+                                recordDate = new Date(`${year}-${month}-${day}T00:00:00`);
+                            }
+                            // Handle YYYY-MM-DD or YYYY/MM/DD
+                            else {
+                                const [_, year, month, day] = match;
+                                recordDate = new Date(`${year}-${month}-${day}T00:00:00`);
+                            }
+
+                            break;
+                        }
+                    }
+
+                    // If not matched, try native Date parser (ISO or timestamp-like)
+                    if (!matched) {
+                        recordDate = new Date(record.date);
+                    }
+                }
+
+            } else if (typeof record.date === 'number') {
+                console.log("mew2");
+                // Handle numeric Excel serials directly
+                if (record.date > 10000 && record.date < 60000) {
+                    const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+                    const msPerDay = 24 * 60 * 60 * 1000;
+                    recordDate = new Date(excelEpoch.getTime() + record.date * msPerDay);
+                } else {
+                    recordDate = new Date(record.date);
+                }
+
+            } else if (record.date instanceof Date) {
+                console.log("mew3");
+                recordDate = record.date;
+
+            } else {
+                throw new ApiError(
+                    `Record ${index + 1} has invalid date type. Expected string, number, or Date.`,
+                    400
+                );
+            }
+
+// ✅ Final validation
+            if (isNaN(recordDate.getTime())) {
+                throw new ApiError(
+                    `Record ${index + 1} has invalid date format. Supported formats: YYYY-MM-DD, YYYY/MM/DD, DD-MM-YYYY, DD/MM/YYYY, or Excel serial number.`,
+                    400
+                );
+            }
+
+
+
+            return {
+                hotelId,
+                date: recordDate,
+                roomsSold: record.roomsSold,
+                day: record.day,
+                arrivalRooms: record.arrivalRooms,
+                departureRooms: record.departureRooms,
+                oooRooms: record.oooRooms,
+                occupancyPercentage: record.occupancyPercentage,
+                roomRevenue: record.roomRevenue,
+                averageRoomRate: record.averageRoomRate,
+                pax: record.pax,
+                complimentRooms: record.complimentRooms,
+                houseUse: record.houseUse,
+                individualConfirm: record.individualConfirm,
+                totalRoomInventory: record.totalRoomInventory
+            };
+        });
+
+        // Sort prepared records by date to validate continuity
+        preparedRecords.sort((a: any, b: any) => a.date.getTime() - b.date.getTime());
+        console.log(preparedRecords)
+
+        // Validate that all new record dates are continuous (each day follows previous by 1 day)
+        for (let i = 1; i < preparedRecords.length; i++) {
+            const currentDate = new Date(preparedRecords[i].date);
+            const previousDate = new Date(preparedRecords[i - 1].date);
+
+            // Normalize both dates to UTC midnight for accurate day comparison
+            const currentDateUTC = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate()));
+            const previousDateUTC = new Date(Date.UTC(previousDate.getUTCFullYear(), previousDate.getUTCMonth(), previousDate.getUTCDate()));
+
+            console.log(currentDateUTC, previousDateUTC)
+
+            // Calculate difference in days
+            const timeDiff = currentDateUTC.getTime() - previousDateUTC.getTime();
+            const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+            if (daysDiff !== 1) {
+                throw new ApiError(`Records are not continuous. Record ${i + 1} (${currentDateUTC.toISOString().split('T')[0]}) should be exactly 1 day after record ${i} (${previousDateUTC.toISOString().split('T')[0]}), but has ${daysDiff} day(s) difference`, 400);
+            }
+        }
+
+        // Validate that first new record's date is exactly 1 day after the last stored record
+        if (lastStoredRecord) {
+            const firstNewDate = new Date(preparedRecords[0].date);
+            const lastStoredDate = new Date(lastStoredRecord.date);
+
+            // Normalize both dates to UTC midnight for accurate day comparison
+            const firstNewDateUTC = new Date(Date.UTC(firstNewDate.getUTCFullYear(), firstNewDate.getUTCMonth(), firstNewDate.getUTCDate()));
+            const lastStoredDateUTC = new Date(Date.UTC(lastStoredDate.getUTCFullYear(), lastStoredDate.getUTCMonth(), lastStoredDate.getUTCDate()));
+
+            // Calculate difference in days
+            const timeDiff = firstNewDateUTC.getTime() - lastStoredDateUTC.getTime();
+            const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+            if (daysDiff !== 1) {
+                throw new ApiError(`First record date (${firstNewDateUTC.toISOString().split('T')[0]}) must be exactly 1 day after the last stored record (${lastStoredDateUTC.toISOString().split('T')[0]}). Current difference is ${daysDiff} day(s)`, 400);
+            }
+        }
+
+        // Insert records into database
+        const createdRecords = await Record.insertMany(preparedRecords);
+
+
+        res.status(201).json({
+            message: `${createdRecords.length} records added successfully`,
+            count: createdRecords.length,
+            records: createdRecords.map(record => ({
+                id: record._id,
+                date: record.date,
+                roomsSold: record.roomsSold,
+                day: record.day,
+                arrivalRooms: record.arrivalRooms,
+                departureRooms: record.departureRooms,
+                oooRooms: record.oooRooms,
+                occupancyPercentage: record.occupancyPercentage,
+                roomRevenue: record.roomRevenue,
+                averageRoomRate: record.averageRoomRate,
+                pax: record.pax,
+                complimentRooms: record.complimentRooms,
+                houseUse: record.houseUse,
+                individualConfirm: record.individualConfirm,
+                totalRoomInventory: record.totalRoomInventory
+            }))
+        });
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).json({
+            message: error.message || 'An unexpected error occurred'
+        });
+    }
+};
+
+/**
  * Get all available record dates for a hotel
  */
 export const getAvailableDates = async (req: Request, res: Response) => {

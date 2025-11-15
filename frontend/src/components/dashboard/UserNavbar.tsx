@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../../redux/store";
+import type { RootState, AppDispatch } from "../../redux/store";
 import { logout } from "../../redux/slices/authSlice";
+import { addLastTrainRecord } from "../../redux/services/modelTrainAPI";
 import "../../stylesheet/ui/component-ui-user-navbar.css";
 
 interface UserNavbarProps {
@@ -14,10 +15,12 @@ interface UserNavbarProps {
 const UserNavbar: React.FC<UserNavbarProps> = ({ role, hotelId }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const { user } = useSelector((state: RootState) => state.auth);
+    const { modelTrain } = useSelector((state: RootState) => state);
     const [activeTab, setActiveTab] = useState("Dashboard");
     const [showProfileDialog, setShowProfileDialog] = useState(false);
+    const [trainMessage, setTrainMessage] = useState<string | null>(null);
 
     const handleNavigation = (tab: string, path: string) => {
         setActiveTab(tab);
@@ -28,6 +31,30 @@ const UserNavbar: React.FC<UserNavbarProps> = ({ role, hotelId }) => {
         dispatch(logout());
         setShowProfileDialog(false);
         navigate("/");
+    };
+
+    const handleRetrainModel = async () => {
+        // @ts-ignore
+        if (!user?.id || !hotelId) {
+            setTrainMessage("Error: User ID or Hotel ID is missing");
+            setTimeout(() => setTrainMessage(null), 3000);
+            return;
+        }
+
+        try {
+
+            const response = await dispatch(
+                // @ts-ignore
+                addLastTrainRecord(user.id, hotelId) as any
+            );
+            if (response) {
+                setTrainMessage("✓ Model retraining started successfully!");
+                setTimeout(() => setTrainMessage(null), 3000);
+            }
+        } catch (error: any) {
+            setTrainMessage(`✕ ${error.response?.data?.message || 'Failed to start retraining'}`);
+            setTimeout(() => setTrainMessage(null), 3000);
+        }
     };
 
     // Automatically update active tab when user navigates manually
@@ -97,7 +124,21 @@ const UserNavbar: React.FC<UserNavbarProps> = ({ role, hotelId }) => {
 
             <div className="user-navbar-right">
                 {/* Retrain Model Button - visible to both owner and manager */}
-                <button className="user-navbar-button">Retrain Model</button>
+                <button
+                    className="user-navbar-button"
+                    onClick={handleRetrainModel}
+                    disabled={modelTrain.loading}
+                    title={modelTrain.loading ? "Model is retraining..." : "Click to retrain the model"}
+                >
+                    {modelTrain.loading ? "⏳ Retraining..." : "🔄 Retrain Model"}
+                </button>
+
+                {/* Train Message */}
+                {trainMessage && (
+                    <div className={`user-navbar-train-message ${trainMessage.startsWith('✓') ? 'success' : 'error'}`}>
+                        {trainMessage}
+                    </div>
+                )}
 
                 {/* Avatar */}
                 <div

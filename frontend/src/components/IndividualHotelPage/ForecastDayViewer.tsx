@@ -48,7 +48,7 @@ const ForecastDayViewer: React.FC<ForecastDayViewerProps> = ({ hotelId }) => {
                 setDayForecast(forecast.forecast || forecast);
             }
         } catch (err: any) {
-            setForecastError(err.message || 'Failed to fetch forecast data');
+            setForecastError(err.response?.data?.message || 'Failed to fetch forecast data');
             setDayForecast(null);
         } finally {
             setIsLoadingForecast(false);

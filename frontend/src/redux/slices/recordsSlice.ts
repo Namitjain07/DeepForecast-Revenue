@@ -183,6 +183,53 @@ const recordsSlice = createSlice({
             state.error = null;
             state.count = 0;
         },
+
+        // Add Records to Hotel
+        addRecordsToHotelStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        addRecordsToHotelSuccess: (state, action: PayloadAction<{ records: Record[]; count: number }>) => {
+            state.loading = false;
+            state.recentRecords = action.payload.records;
+            state.count = action.payload.count;
+            state.error = null;
+        },
+        addRecordsToHotelFailure: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+
+        // Fetch Available Dates
+        fetchAvailableDatesStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        fetchAvailableDatesSuccess: (state, action: PayloadAction<{ records: Record[]; count: number }>) => {
+            state.loading = false;
+            state.count = action.payload.count;
+            state.error = null;
+        },
+        fetchAvailableDatesFailure: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+
+        // Download Records CSV
+        downloadRecordsCSVStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        downloadRecordsCSVSuccess: (state, action: PayloadAction<{ records: Record[]; count: number }>) => {
+            state.loading = false;
+            state.dateRangeRecords = action.payload.records;
+            state.count = action.payload.count;
+            state.error = null;
+        },
+        downloadRecordsCSVFailure: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
     },
 });
 
@@ -193,6 +240,15 @@ export const {
     getDateRangeRecordsStart,
     getDateRangeRecordsSuccess,
     getDateRangeRecordsFailure,
+    addRecordsToHotelStart,
+    addRecordsToHotelSuccess,
+    addRecordsToHotelFailure,
+    fetchAvailableDatesStart,
+    fetchAvailableDatesSuccess,
+    fetchAvailableDatesFailure,
+    downloadRecordsCSVStart,
+    downloadRecordsCSVSuccess,
+    downloadRecordsCSVFailure,
     // Revenue
     getRevenueStart,
     getRevenueSuccess,

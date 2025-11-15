@@ -15,6 +15,7 @@ import uploadRoutes from "./routes/upload.route";
 import userRoutes from "./routes/user.route";
 import recordRoutes from "./routes/records.route";
 import forecastRoutes from "./routes/forcast.route";
+import trainRoutes from "./routes/train.route";
 import { comprehensiveSecurityMiddleware, securityHeadersMiddleware } from './security/securityMiddleware';
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.use('/api/v1/upload', uploadRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/records', recordRoutes);
 app.use('/api/v1/forecast', forecastRoutes);
+app.use('/api/v1/train', trainRoutes);
 
 // Basic route
 app.get("/", (req, res) => {

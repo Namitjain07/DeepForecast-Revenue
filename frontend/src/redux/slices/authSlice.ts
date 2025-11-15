@@ -3,6 +3,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 interface AuthState {
     token: string | null;
     user: {
+        id(id: any, hotelId: string): any;
         _id?: string;
         name?: string;
         email?: string;
@@ -76,6 +77,18 @@ const authSlice = createSlice({
             localStorage.removeItem('token');
             localStorage.removeItem('user');
         },
+        addNewUserStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        addNewUserSuccess: (state) => {
+            state.loading = false;
+            state.error = null;
+        },
+        addNewUserFailure: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
         logout: (state) => {
             state.token = null;
             state.user = null;
@@ -95,5 +108,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, restoreAuthState } = authSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, addNewUserStart, addNewUserSuccess, addNewUserFailure, logout, restoreAuthState } = authSlice.actions;
 export default authSlice.reducer;

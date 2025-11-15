@@ -1,5 +1,5 @@
 // filepath: c:\Btech\Sem 7\Revenue_Prediction_Website\frontend\src\pages\UserManager.tsx
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../redux/store';

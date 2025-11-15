@@ -4,9 +4,12 @@ import {
     getAvailableDatesStart,
     getAvailableDatesSuccess,
     getAvailableDatesFailure,
-    getDateRangeForecastsStart,
-    getDateRangeForecastsSuccess,
-    getDateRangeForecastsFailure,
+    downloadForecastCSVStart,
+    downloadForecastCSVSuccess,
+    downloadForecastCSVFailure,
+    getSingleDayForecastStart,
+    getSingleDayForecastSuccess,
+    getSingleDayForecastFailure,
 } from '../slices/forcastSlice';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
@@ -45,7 +48,7 @@ export const downloadForecastCSV = (
     endDate: string
 ) => async (dispatch: Dispatch) => {
     try {
-        dispatch(getDateRangeForecastsStart());
+        dispatch(downloadForecastCSVStart());
 
         let allForecasts: any[] = [];
         let page = 1;
@@ -115,14 +118,14 @@ export const downloadForecastCSV = (
         link.click();
         link.parentNode?.removeChild(link);
 
-        dispatch(getDateRangeForecastsSuccess({
+        dispatch(downloadForecastCSVSuccess({
             forecasts: allForecasts,
             count: allForecasts.length,
         }));
         return { forecasts: allForecasts, count: allForecasts.length };
     } catch (error: any) {
         const message = error.response?.data?.message || error.message || 'Failed to download CSV';
-        dispatch(getDateRangeForecastsFailure(message));
+        dispatch(downloadForecastCSVFailure(message));
         throw error;
     }
 };
@@ -130,8 +133,9 @@ export const downloadForecastCSV = (
 /**
  * Fetch forecast data for a specific day
  */
-export const fetchSingleDayForecast = (hotelId: string, date: string) => async () => {
+export const fetchSingleDayForecast = (hotelId: string, date: string) => async (dispatch: Dispatch) => {
     try {
+        dispatch(getSingleDayForecastStart());
         const response = await axios.get(
             `${API_URL}/forecast/day/${hotelId}/${date}`,
             {
@@ -141,9 +145,11 @@ export const fetchSingleDayForecast = (hotelId: string, date: string) => async (
                 },
             }
         );
+        dispatch(getSingleDayForecastSuccess());
         return response.data;
     } catch (error: any) {
         const message = error.response?.data?.message || 'Failed to fetch forecast data';
+        dispatch(getSingleDayForecastFailure(message));
         console.error('Single day forecast error:', message);
         throw error;
     }

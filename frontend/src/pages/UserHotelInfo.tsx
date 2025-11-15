@@ -104,7 +104,7 @@ function UserHotelInfo() {
             // Clear success message after 3 seconds
             setTimeout(() => setSuccess(false), 3000);
         } catch (err: any) {
-            setError(err.message || 'Failed to update hotel information');
+            setError(err.response?.data?.message || 'Failed to update hotel information');
         } finally {
             setIsSaving(false);
         }

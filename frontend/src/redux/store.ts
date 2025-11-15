@@ -5,6 +5,7 @@ import dashboardReducer from './slices/dashboardSlice';
 import usersReducer from './slices/usersSlice';
 import recordsReducer from './slices/recordsSlice';
 import forecastReducer from './slices/forcastSlice';
+import modelTrainReducer from './slices/modelTrainSlice';
 
 export const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
         users: usersReducer,
         records: recordsReducer,
         forecast: forecastReducer,
+        modelTrain: modelTrainReducer,
     },
 });
 

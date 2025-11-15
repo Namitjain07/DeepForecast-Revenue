@@ -104,9 +104,9 @@ export const addUser = async (req: Request, res: Response) => {
         // Check if requester has permission to create this role
         // @ts-ignore
         const requester = req.user;
-        if (role === 'owner' && requester.role !== 'admin') {
-            throw new ApiError('Only admin can create owner accounts', 403);
-        }
+        // if (role === 'owner' && requester.role !== 'admin') {
+        //     throw new ApiError('Only admin can create owner accounts', 403);
+        // }
 
         if (role === 'manager' && !['admin', 'owner'].includes(requester.role)) {
             throw new ApiError('Only admin or owner can create manager accounts', 403);

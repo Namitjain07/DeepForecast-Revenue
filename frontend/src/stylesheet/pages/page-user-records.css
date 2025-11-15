@@ -28,6 +28,7 @@
     border-radius: 12px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    margin-bottom: 1.5rem;
 }
 
 .page-user-records-title {
@@ -39,7 +40,8 @@
 }
 
 .page-user-records-content {
-    padding: 0 24px 24px 24px;
+    padding: 24px 24px 24px 24px;
+
 }
 
 /* Responsive Design */

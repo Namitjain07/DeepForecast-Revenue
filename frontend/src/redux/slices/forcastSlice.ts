@@ -74,7 +74,7 @@ const forecastSlice = createSlice({
             state.error = action.payload;
         },
 
-        // Get Forecasts by Date Range
+        // Get Date Range Forecasts
         getDateRangeForecastsStart: (state) => {
             state.loading = true;
             state.error = null;
@@ -86,6 +86,36 @@ const forecastSlice = createSlice({
             state.error = null;
         },
         getDateRangeForecastsFailure: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+
+        // Download Forecast CSV
+        downloadForecastCSVStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        downloadForecastCSVSuccess: (state, action: PayloadAction<{ forecasts: Forecast[]; count: number }>) => {
+            state.loading = false;
+            state.dateRangeForecasts = action.payload.forecasts;
+            state.count = action.payload.count;
+            state.error = null;
+        },
+        downloadForecastCSVFailure: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+
+        // Get Single Day Forecast
+        getSingleDayForecastStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        getSingleDayForecastSuccess: (state) => {
+            state.loading = false;
+            state.error = null;
+        },
+        getSingleDayForecastFailure: (state, action: PayloadAction<string>) => {
             state.loading = false;
             state.error = action.payload;
         },
@@ -211,6 +241,12 @@ export const {
     getDateRangeForecastsStart,
     getDateRangeForecastsSuccess,
     getDateRangeForecastsFailure,
+    downloadForecastCSVStart,
+    downloadForecastCSVSuccess,
+    downloadForecastCSVFailure,
+    getSingleDayForecastStart,
+    getSingleDayForecastSuccess,
+    getSingleDayForecastFailure,
     getForecastByPeriodStart,
     getForecastByPeriodSuccess,
     getForecastByPeriodFailure,

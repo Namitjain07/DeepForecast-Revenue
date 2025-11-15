@@ -2,11 +2,35 @@
     width: 100%;
 }
 
+.component-ui-user-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
 .component-ui-user-table-title {
     font-size: 20px;
     font-weight: 600;
     color: #1a1a1a;
-    margin: 0 0 20px 0;
+    margin: 0;
+}
+
+.component-ui-user-table-add-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.component-ui-user-table-add-btn:hover {
+    background-color: #45a049;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
 .component-ui-user-table-wrapper {
@@ -143,6 +167,28 @@
     margin: 0;
 }
 
+.component-ui-user-table-dialog-error {
+    background-color: #ffebee;
+    border: 1px solid #f5a6a6;
+    color: #d32f2f;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 20px 0 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.component-ui-user-table-dialog-success {
+    background-color: #e8f5e9;
+    border: 1px solid #81c784;
+    color: #2e7d32;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 20px 0 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
 .component-ui-user-table-dialog-body {
     padding: 20px;
 }
@@ -203,7 +249,7 @@
     border: 1px solid #e0e0e0;
 }
 
-.component-ui-user-table-dialog-btn-cancel:hover {
+.component-ui-user-table-dialog-btn-cancel:hover:not(:disabled) {
     background-color: #e0e0e0;
 }
 
@@ -212,8 +258,13 @@
     color: white;
 }
 
-.component-ui-user-table-dialog-btn-save:hover {
+.component-ui-user-table-dialog-btn-save:hover:not(:disabled) {
     background-color: #1565c0;
+}
+
+.component-ui-user-table-dialog-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 @media (max-width: 768px) {

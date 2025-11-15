@@ -103,7 +103,7 @@ const AddHotel: React.FC = () => {
             // Navigate back to hotels page
             navigate("/all-hotels");
         } catch (err: any) {
-            const message = err.response?.data?.message || err.message || "Failed to add hotel";
+            const message = err.response?.data?.message  || "Failed to add hotel";
             setError(message);
             console.error("Error adding hotel:", err);
         } finally {
