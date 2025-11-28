@@ -6,7 +6,6 @@ import RecentRecords from '../components/IndividualHotelPage/RecentRecords';
 import StatCard from '../components/dashboard/StatCard';
 import { fetchHotelDashboardStats } from '../redux/services/hotelApi';
 import { fetchRecentRecords } from '../redux/services';
-import '../stylesheet/pages/page-user-dashboard.css';
 
 function UserDashboard() {
     const { user } = useSelector((state: RootState) => state.auth);
@@ -56,40 +55,50 @@ function UserDashboard() {
     }, [hotelId, dispatch]);
 
     return (
-        <div>
+        <div className="min-h-screen bg-gray-50">
             <UserNavbar role={role} hotelId={hotelId} />
-            <div className="page-user-dashboard">
-                <div className="page-user-dashboard-header">
-                    <h1>Dashboard</h1>
-                    <p>Welcome back, {user?.name}! Here's your hotel's performance overview.</p>
+            
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="mb-8">
+                    <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+                    <p className="mt-1 text-sm text-gray-500">
+                        Welcome back, {user?.name}! Here's your hotel's performance overview.
+                    </p>
                 </div>
 
                 {/* Stat Cards using StatCard Component */}
-                <div className="page-user-dashboard-stats">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-8">
                     <StatCard
                         title="Total Revenue"
                         value={`₹${dashboardStats.totalRevenue.toLocaleString('en-IN')}`}
                         description="Last 30 days"
                         icon="💰"
+                        color="green"
                     />
                     <StatCard
                         title="Rooms Sold"
                         value={dashboardStats.totalRoomsSold}
                         description="Last 30 days"
                         icon="🛏️"
+                        color="blue"
                     />
                     <StatCard
                         title="Occupancy Rate"
                         value={`${dashboardStats.avgOccupancyRate}%`}
                         description="Average rate for last 30 days"
                         icon="📊"
+                        color="purple"
                     />
                 </div>
 
                 {/* Recent Records Section */}
-                <div className="page-user-dashboard-recent-section">
-                    <div className="page-user-dashboard-recent-section-title">Recent Records</div>
-                    <RecentRecords hotelId={hotelId} />
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/50">
+                        <h3 className="text-lg font-medium leading-6 text-gray-900">Recent Records</h3>
+                    </div>
+                    <div className="p-6">
+                        <RecentRecords hotelId={hotelId} />
+                    </div>
                 </div>
             </div>
         </div>

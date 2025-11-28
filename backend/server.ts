@@ -6,6 +6,8 @@ import cors from "cors";
 // @ts-ignore
 import dotenv from "dotenv";
 // @ts-ignore
+import compression from "compression";
+// @ts-ignore
 import swaggerUi from 'swagger-ui-express';
 import { specs } from './config/swagger';
 import authRoutes from "./routes/auth.route";
@@ -16,19 +18,29 @@ import userRoutes from "./routes/user.route";
 import recordRoutes from "./routes/records.route";
 import forecastRoutes from "./routes/forcast.route";
 import trainRoutes from "./routes/train.route";
-import { comprehensiveSecurityMiddleware, securityHeadersMiddleware } from './security/securityMiddleware';
+import { comprehensiveSecurityMiddleware, globalRateLimitMiddleware } from './security/securityMiddleware';
 
 dotenv.config();
 
 const app = express();
 
+// Trust proxy for rate limiting behind load balancers/proxies
+app.set('trust proxy', 1);
+
 // Connect to MongoDB
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: process.env.CORS_ORIGIN || '*', // Allow configuring origin for security
+    credentials: true
+}));
+app.use(compression() as any);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Apply global rate limiting
+app.use(globalRateLimitMiddleware as any);
 
 // Apply comprehensive security middleware to all routes
 app.use(comprehensiveSecurityMiddleware);
@@ -47,12 +59,12 @@ app.use('/api/v1/forecast', forecastRoutes);
 app.use('/api/v1/train', trainRoutes);
 
 // Basic route
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
     res.send("Server is running");
 });
 
 // Error handling middleware
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Something broke!', error: err.message });
 });

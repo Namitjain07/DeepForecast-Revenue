@@ -14,7 +14,6 @@ import {
     Legend,
     ResponsiveContainer
 } from 'recharts';
-import '../../stylesheet/ui/component-ui-arrival-room-graph.css';
 
 interface ArrivalRoomGraphProps {
     hotelId: string;
@@ -27,11 +26,11 @@ interface ChartDataPoint {
     isPredicted?: boolean;
 }
 
-const ArrivalRoomGraph: React.FC<ArrivalRoomGraphProps> = ({ hotelId }) => {
+const ArrivalRoomGraph: React.FC<ArrivalRoomGraphProps> = React.memo(({ hotelId }) => {
     const dispatch = useDispatch<AppDispatch>();
     const [timePeriod, setTimePeriod] = useState<'1w' | '1m' | '3m' | '6m' | '12m'>('1m');
-    const { arrival: arrivalRecords } = useSelector((state: RootState) => state.records);
-    const { arrival: arrivalForecasts } = useSelector((state: RootState) => state.forecast);
+    const arrivalRecords = useSelector((state: RootState) => state.records.arrival);
+    const arrivalForecasts = useSelector((state: RootState) => state.forecast.arrival);
 
     useEffect(() => {
         if (hotelId) {
@@ -112,101 +111,124 @@ const ArrivalRoomGraph: React.FC<ArrivalRoomGraphProps> = ({ hotelId }) => {
     }, [arrivalRecords, arrivalForecasts, timePeriod]);
 
     return (
-        <div className="component-ui-arrival-room-graph-container">
-            <div className="component-ui-arrival-room-graph-header">
-                <h3 className="component-ui-arrival-room-graph-title">Arrival Room Analysis</h3>
-                <div className="component-ui-arrival-room-graph-toggle">
-                    {(['1w', '1m', '3m', '6m', '12m'] as const).map(periodArrival => (
-                        <button
-                            key={periodArrival}
-                            className={`component-ui-arrival-room-graph-toggle-btn ${timePeriod === periodArrival ? 'active' : ''}`}
-                            onClick={() => setTimePeriod(periodArrival)}
-                        >
-                            {periodArrival === '1w' ? '1 Week' : periodArrival === '1m' ? '1 Month' : periodArrival === '3m' ? '3 Months' : periodArrival === '6m' ? '6 Months' : '12 Months'}
-                        </button>
-                    ))}
+        <div className="w-full">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                    <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                        <span className="mr-2">🛫</span> Arrival Room Analysis
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                        {(['1w', '1m', '3m', '6m', '12m'] as const).map(periodArrival => (
+                            <button
+                                key={periodArrival}
+                                className={`
+                                    px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200
+                                    ${timePeriod === periodArrival
+                                        ? 'bg-indigo-600 text-white shadow-md'
+                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    }
+                                `}
+                                onClick={() => setTimePeriod(periodArrival)}
+                            >
+                                {periodArrival === '1w' ? '1 Week' : periodArrival === '1m' ? '1 Month' : periodArrival === '3m' ? '3 Months' : periodArrival === '6m' ? '6 Months' : '12 Months'}
+                            </button>
+                        ))}
+                    </div>
                 </div>
+                <ResponsiveContainer width="100%" height={chartHeight}>
+                    {chartType === 'bar' ? (
+                        <BarChart
+                            data={arrivalData}
+                            margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                            <XAxis
+                                dataKey="date"
+                                tick={{ fill: '#6b7280', fontSize: 12 }}
+                                axisLine={{ stroke: '#e5e7eb' }}
+                                tickLine={false}
+                                interval={xAxisInterval}
+                            />
+                            <YAxis
+                                tick={{ fill: '#6b7280', fontSize: 12 }}
+                                axisLine={{ stroke: '#e5e7eb' }}
+                                tickLine={false}
+                            />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: '#fff',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                                }}
+                                formatter={(value, name) => {
+                                    if (name === 'actual') return [value, 'Actual Arrivals'];
+                                    return [value, 'Predicted Arrivals'];
+                                }}
+                                labelFormatter={(label) => `Date: ${label}`}
+                            />
+                            <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
+                            <Bar dataKey="actual" fill="#10b981" name="Actual Arrivals" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="predicted" fill="#6ee7b7" name="Predicted Arrivals" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                    ) : (
+                        <LineChart
+                            data={arrivalData}
+                            margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                            <XAxis
+                                dataKey="date"
+                                tick={{ fill: '#6b7280', fontSize: 12 }}
+                                axisLine={{ stroke: '#e5e7eb' }}
+                                tickLine={false}
+                                interval={xAxisInterval}
+                            />
+                            <YAxis
+                                tick={{ fill: '#6b7280', fontSize: 12 }}
+                                axisLine={{ stroke: '#e5e7eb' }}
+                                tickLine={false}
+                            />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: '#fff',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                                }}
+                                formatter={(value, name) => {
+                                    if (name === 'actual') return [value, 'Actual Arrivals'];
+                                    return [value, 'Predicted Arrivals'];
+                                }}
+                                labelFormatter={(label) => `Date: ${label}`}
+                            />
+                            <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="line" />
+                            <Line
+                                type="monotone"
+                                dataKey="actual"
+                                stroke="#10b981"
+                                dot={false}
+                                strokeWidth={3}
+                                name="Actual Arrivals"
+                                isAnimationActive={true}
+                                activeDot={{ r: 6 }}
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="predicted"
+                                stroke="#6ee7b7"
+                                dot={false}
+                                strokeWidth={3}
+                                strokeDasharray="5 5"
+                                name="Predicted Arrivals"
+                                isAnimationActive={true}
+                            />
+                        </LineChart>
+                    )}
+                </ResponsiveContainer>
             </div>
-            <ResponsiveContainer width="100%" height={chartHeight}>
-                {chartType === 'bar' ? (
-                    <BarChart
-                        data={arrivalData}
-                        margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                        <XAxis
-                            dataKey="date"
-                            tick={{ fill: '#666', fontSize: 12 }}
-                            interval={xAxisInterval}
-                        />
-                        <YAxis tick={{ fill: '#666', fontSize: 12 }} />
-                        <Tooltip
-                            contentStyle={{
-                                backgroundColor: '#fff',
-                                border: '1px solid #e0e0e0',
-                                borderRadius: '4px',
-                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                            }}
-                            formatter={(value, name) => {
-                                if (name === 'actual') return [value, 'Actual Arrivals'];
-                                return [value, 'Predicted Arrivals'];
-                            }}
-                            labelFormatter={(label) => `Date: ${label}`}
-                        />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                        <Bar dataKey="actual" fill="#ff6384" name="Actual Arrivals" radius={[4, 4, 0, 0]} />
-                        <Bar dataKey="predicted" fill="#36a2eb" name="Predicted Arrivals" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                ) : (
-                    <LineChart
-                        data={arrivalData}
-                        margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                        <XAxis
-                            dataKey="date"
-                            tick={{ fill: '#666', fontSize: 12 }}
-                            interval={xAxisInterval}
-                        />
-                        <YAxis tick={{ fill: '#666', fontSize: 12 }} />
-                        <Tooltip
-                            contentStyle={{
-                                backgroundColor: '#fff',
-                                border: '1px solid #e0e0e0',
-                                borderRadius: '4px',
-                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                            }}
-                            formatter={(value, name) => {
-                                if (name === 'actual') return [value, 'Actual Arrivals'];
-                                return [value, 'Predicted Arrivals'];
-                            }}
-                            labelFormatter={(label) => `Date: ${label}`}
-                        />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                        <Line
-                            type="monotone"
-                            dataKey="actual"
-                            stroke="#ff6384"
-                            dot={false}
-                            strokeWidth={2}
-                            name="Actual Arrivals"
-                            isAnimationActive={true}
-                        />
-                        <Line
-                            type="monotone"
-                            dataKey="predicted"
-                            stroke="#36a2eb"
-                            dot={false}
-                            strokeWidth={2}
-                            strokeDasharray="5 5"
-                            name="Predicted Arrivals"
-                            isAnimationActive={true}
-                        />
-                    </LineChart>
-                )}
-            </ResponsiveContainer>
-        </div>
-    );
-};
+    </div>
+  );
+});
 
 export default ArrivalRoomGraph;

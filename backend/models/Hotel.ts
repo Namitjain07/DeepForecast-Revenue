@@ -59,4 +59,7 @@ const HotelSchema = new Schema<IHotel>({
     timestamps: true
 });
 
+// Index for faster queries by admin
+HotelSchema.index({ adminId: 1 });
+
 export default model<IHotel>('Hotel', HotelSchema);

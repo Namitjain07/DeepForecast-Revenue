@@ -84,4 +84,7 @@ const RecordSchema = new Schema<IRecord>({
     timestamps: true
 });
 
+// Add compound index for faster queries by hotel and date
+RecordSchema.index({ hotelId: 1, date: -1 });
+
 export default model<IRecord>('Record', RecordSchema);

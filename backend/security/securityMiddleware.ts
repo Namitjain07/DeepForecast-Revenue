@@ -1,11 +1,29 @@
 import { Request, Response, NextFunction } from 'express';
+import rateLimit from 'express-rate-limit';
+import dotenv from 'dotenv';
 import { validateInputMiddleware } from './inputValidation';
 import { loginRateLimitMiddleware } from './bruteForceProtection';
+
+dotenv.config();
 
 /**
  * Security Middleware Aggregator
  * Combines all security checks and protections
  */
+
+/**
+ * Global Rate Limiter
+ * Limits the number of requests from the same IP
+ */
+export const globalRateLimitMiddleware = rateLimit({
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // Default 15 minutes
+    max: parseInt(process.env.RATE_LIMIT_MAX || '1000'), // Default 1000 requests
+    message: {
+        message: 'Too many requests from this IP, please try again later'
+    },
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 
 /**
  * Express middleware for request size limiting
@@ -30,7 +48,7 @@ export const requestSizeLimitMiddleware = (req: Request, res: Response, next: Ne
 /**
  * Express middleware for security headers
  */
-export const securityHeadersMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export const securityHeadersMiddleware = (_req: Request, res: Response, next: NextFunction): void => {
     // Prevent XSS attacks
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
@@ -168,6 +186,7 @@ export default {
     preventHTTPParameterPollutionMiddleware,
     comprehensiveSecurityMiddleware,
     loginSecurityMiddleware,
-    apiSecurityMiddleware
+    apiSecurityMiddleware,
+    globalRateLimitMiddleware
 };
 

@@ -1,17 +1,24 @@
 // filepath: c:\Btech\Sem 7\Revenue_Prediction_Website\frontend\src\pages\UserForecast.tsx
-// import React from 'react';
+import { Suspense, lazy } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../redux/store';
 import UserNavbar from '../components/dashboard/UserNavbar';
-import RevenueGraph from '../components/IndividualHotelPage/RevenueGraph';
-import RoomSoldGraph from '../components/IndividualHotelPage/RoomSoldGraph';
-import ArrivalRoomGraph from '../components/IndividualHotelPage/ArrivalRoomGraph';
-import DepartureRoomGraph from '../components/IndividualHotelPage/DepartureRoomGraph';
-import OOORoomGraph from '../components/IndividualHotelPage/OOORoomGraph';
 import DownloadForcastCSV from '../components/IndividualHotelPage/DownloadForcastCSV';
 import ForecastDayViewer from '../components/IndividualHotelPage/ForecastDayViewer';
 import '../stylesheet/pages/page-user-forecast.css';
+
+const RevenueGraph = lazy(() => import('../components/IndividualHotelPage/RevenueGraph'));
+const RoomSoldGraph = lazy(() => import('../components/IndividualHotelPage/RoomSoldGraph'));
+const ArrivalRoomGraph = lazy(() => import('../components/IndividualHotelPage/ArrivalRoomGraph'));
+const DepartureRoomGraph = lazy(() => import('../components/IndividualHotelPage/DepartureRoomGraph'));
+const OOORoomGraph = lazy(() => import('../components/IndividualHotelPage/OOORoomGraph'));
+
+const GraphSkeleton = () => (
+    <div className="w-full h-[400px] bg-gray-100 rounded animate-pulse flex items-center justify-center text-gray-400">
+        Loading Graph...
+    </div>
+);
 
 function UserForecast() {
     const { hotelId } = useParams<{ hotelId: string }>();
@@ -46,19 +53,29 @@ function UserForecast() {
                     {hotelId && (
                         <>
                             <div className="page-user-forecast-graph-wrapper">
-                                <RevenueGraph hotelId={hotelId} />
+                                <Suspense fallback={<GraphSkeleton />}>
+                                    <RevenueGraph hotelId={hotelId} />
+                                </Suspense>
                             </div>
                             <div className="page-user-forecast-graph-wrapper">
-                                <RoomSoldGraph hotelId={hotelId} />
+                                <Suspense fallback={<GraphSkeleton />}>
+                                    <RoomSoldGraph hotelId={hotelId} />
+                                </Suspense>
                             </div>
                             <div className="page-user-forecast-graph-wrapper">
-                                <ArrivalRoomGraph hotelId={hotelId} />
+                                <Suspense fallback={<GraphSkeleton />}>
+                                    <ArrivalRoomGraph hotelId={hotelId} />
+                                </Suspense>
                             </div>
                             <div className="page-user-forecast-graph-wrapper">
-                                <DepartureRoomGraph hotelId={hotelId} />
+                                <Suspense fallback={<GraphSkeleton />}>
+                                    <DepartureRoomGraph hotelId={hotelId} />
+                                </Suspense>
                             </div>
                             <div className="page-user-forecast-graph-wrapper">
-                                <OOORoomGraph hotelId={hotelId} />
+                                <Suspense fallback={<GraphSkeleton />}>
+                                    <OOORoomGraph hotelId={hotelId} />
+                                </Suspense>
                             </div>
                         </>
                     )}

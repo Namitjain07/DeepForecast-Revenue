@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminNavbar from '../components/dashboard/AdminNavbar';
 import HotelCard from '../components/dashboard/HotelCard';
-import '../stylesheet/pages/page-all-hotel.css'
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchAllHotels, searchHotels } from '../redux/services/api';
 import { clearSearch } from '../redux/slices/hotelSlice';
@@ -83,34 +82,41 @@ const AllHotels: React.FC = () => {
     const mockImageUrl = "https://picsum.photos/seed/hotel/400/300";
 
     return (
-        <div>
+        <div className="min-h-screen bg-gray-50">
             <AdminNavbar role={role} />
-            <div className="page-all-hotel">
-                <div className="page-all-hotel-header">
-                    <div className="page-all-hotel-header-top">
-                        <h1>All Hotels</h1>
-                        {role === 'admin' && (
-                            <div
-                                className='page-all-hotel-add-button'
-                                onClick={handleAddHotel}
-                            >
-                                + Add Hotel
-                            </div>
-                        )}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 inline-block">
+                            All Hotels
+                        </h1>
+                        <p className="mt-1 text-sm text-gray-500">Manage and view all registered hotels</p>
                     </div>
-
-                    <div className="page-all-hotel-search-container">
-                        <input
-                            type="text"
-                            className="page-all-hotel-search-bar"
-                            placeholder="Search by hotel name, city, or owner..."
-                            value={searchTerm}
-                            onChange={handleSearch}
-                        />
-                    </div>
+                    
+                    {role === 'admin' && (
+                        <button
+                            onClick={handleAddHotel}
+                            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:-translate-y-0.5 transition-all duration-200"
+                        >
+                            <span className="mr-2 text-lg">+</span> Add Hotel
+                        </button>
+                    )}
                 </div>
 
-                <div className="page-all-hotel-grid">
+                <div className="mb-8 relative max-w-2xl">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span className="text-gray-400 text-lg">🔍</span>
+                    </div>
+                    <input
+                        type="text"
+                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm shadow-sm transition-shadow duration-200 hover:shadow-md"
+                        placeholder="Search by hotel name, city, or owner..."
+                        value={searchTerm}
+                        onChange={handleSearch}
+                    />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {displayHotels.length > 0 ? (
                         displayHotels.map((hotel) => (
                             <HotelCard
@@ -124,9 +130,11 @@ const AllHotels: React.FC = () => {
                             />
                         ))
                     ) : (
-                        <p className="page-all-hotel-no-results">
-                            {loading ? 'Loading hotels...' : 'No hotels found matching your search.'}
-                        </p>
+                        <div className="col-span-full text-center py-12">
+                            <p className="text-gray-500 text-lg">
+                                {loading ? 'Loading hotels...' : 'No hotels found matching your search.'}
+                            </p>
+                        </div>
                     )}
                 </div>
 
@@ -134,15 +142,15 @@ const AllHotels: React.FC = () => {
                 {searchTerm === '' && (
                     <div
                         ref={scrollContainerRef}
-                        className="page-all-hotel-infinite-scroll-trigger"
+                        className="py-8 text-center"
                     >
-                        {loading && <p className="page-all-hotel-loading">Loading more hotels...</p>}
+                        {loading && <p className="text-indigo-600 font-medium animate-pulse">Loading more hotels...</p>}
                     </div>
                 )}
 
                 {/* Pagination info */}
                 {displayPagination && (
-                    <div className="page-all-hotel-pagination-info">
+                    <div className="text-center text-sm text-gray-500 mt-4 pb-8">
                         <p>
                             Showing {displayHotels.length} of {displayPagination.totalCount} hotels
                             {displayPagination.hasNextPage && ' (scroll to load more)'}

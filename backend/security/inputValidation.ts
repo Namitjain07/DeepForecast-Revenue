@@ -212,9 +212,7 @@ export const validatePasswordStrength = (
     return {
         isValid,
         score,
-        error: isValid
-            ? undefined
-            : `Password is too weak. Score: ${score}/5. Include uppercase, lowercase, numbers, and special characters.`
+        ...(isValid ? {} : { error: `Password is too weak. Score: ${score}/5. Include uppercase, lowercase, numbers, and special characters.` })
     };
 };
 

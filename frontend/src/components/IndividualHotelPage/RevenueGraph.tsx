@@ -14,7 +14,6 @@ import {
     Legend,
     ResponsiveContainer
 } from 'recharts';
-import '../../stylesheet/ui/component-ui-revenue-graph.css';
 
 interface RevenueGraphProps {
     hotelId: string;
@@ -27,11 +26,11 @@ interface ChartDataPoint {
     isPredicted?: boolean;
 }
 
-const RevenueGraph: React.FC<RevenueGraphProps> = ({ hotelId }) => {
+const RevenueGraph: React.FC<RevenueGraphProps> = React.memo(({ hotelId }) => {
     const dispatch = useDispatch<AppDispatch>();
     const [timePeriod, setTimePeriod] = useState<'1w' | '1m' | '3m' | '6m' | '12m'>('1m');
-    const { revenue: revenueRecords } = useSelector((state: RootState) => state.records);
-    const { revenue: revenueForecasts } = useSelector((state: RootState) => state.forecast);
+    const revenueRecords = useSelector((state: RootState) => state.records.revenue);
+    const revenueForecasts = useSelector((state: RootState) => state.forecast.revenue);
 
     useEffect(() => {
         if (hotelId) {
@@ -112,66 +111,98 @@ const RevenueGraph: React.FC<RevenueGraphProps> = ({ hotelId }) => {
     }, [revenueRecords, revenueForecasts, timePeriod]);
 
     return (
-        <div className="component-ui-revenue-graph-container">
-            <div className="component-ui-revenue-graph-header">
-                <h3 className="component-ui-revenue-graph-title">Revenue Analysis</h3>
-                <div className="component-ui-revenue-graph-toggle">
-                    {(['1w', '1m', '3m', '6m', '12m'] as const).map(period => (
-                        <button
-                            key={period}
-                            className={`component-ui-revenue-graph-toggle-btn ${timePeriod === period ? 'active' : ''}`}
-                            onClick={() => setTimePeriod(period)}
-                        >
-                            {period === '1w' ? '1 Week' : period === '1m' ? '1 Month' : period === '3m' ? '3 Months' : period === '6m' ? '6 Months' : '12 Months'}
-                        </button>
-                    ))}
+        <div className="w-full">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                    <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                        <span className="mr-2">💰</span> Revenue Analysis
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                        {(['1w', '1m', '3m', '6m', '12m'] as const).map(period => (
+                            <button
+                                key={period}
+                                className={`
+                                    px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200
+                                    ${timePeriod === period
+                                        ? 'bg-indigo-600 text-white shadow-md'
+                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    }
+                                `}
+                                onClick={() => setTimePeriod(period)}
+                            >
+                                {period === '1w' ? '1 Week' : period === '1m' ? '1 Month' : period === '3m' ? '3 Months' : period === '6m' ? '6 Months' : '12 Months'}
+                            </button>
+                        ))}
+                    </div>
                 </div>
+                <ResponsiveContainer width="100%" height={chartHeight}>
+                    {chartType === 'bar' ? (
+                        <BarChart data={revenueData} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                            <XAxis
+                                dataKey="date"
+                                tick={{ fill: '#6b7280', fontSize: 12 }}
+                                axisLine={{ stroke: '#e5e7eb' }}
+                                tickLine={false}
+                                interval={xAxisInterval}
+                            />
+                            <YAxis
+                                tick={{ fill: '#6b7280', fontSize: 12 }}
+                                axisLine={{ stroke: '#e5e7eb' }}
+                                tickLine={false}
+                                tickFormatter={(value) => `$${value}`}
+                            />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: '#fff',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                                }}
+                                formatter={(value, name) => {
+                                    if (name === 'actual') return [`$${value}`, 'Actual Revenue'];
+                                    return [`$${value}`, 'Predicted Revenue'];
+                                }}
+                            />
+                            <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
+                            <Bar dataKey="actual" fill="#6366f1" name="Actual Revenue" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="predicted" fill="#a5b4fc" name="Predicted Revenue" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                    ) : (
+                        <LineChart data={revenueData} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                            <XAxis
+                                dataKey="date"
+                                tick={{ fill: '#6b7280', fontSize: 12 }}
+                                axisLine={{ stroke: '#e5e7eb' }}
+                                tickLine={false}
+                                interval={xAxisInterval}
+                            />
+                            <YAxis
+                                tick={{ fill: '#6b7280', fontSize: 12 }}
+                                axisLine={{ stroke: '#e5e7eb' }}
+                                tickLine={false}
+                                tickFormatter={(value) => `$${value}`}
+                            />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: '#fff',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                                }}
+                                formatter={(value) => `$${value}`}
+                                labelFormatter={(label) => `Date: ${label}`}
+                            />
+                            <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="line" />
+                            <Line type="monotone" dataKey="actual" stroke="#6366f1" dot={false} strokeWidth={3} name="Actual Revenue" activeDot={{ r: 6 }} />
+                            <Line type="monotone" dataKey="predicted" stroke="#a5b4fc" dot={false} strokeWidth={3} strokeDasharray="5 5" name="Predicted Revenue" />
+                        </LineChart>
+                    )}
+                </ResponsiveContainer>
             </div>
-            <ResponsiveContainer width="100%" height={chartHeight}>
-                {chartType === 'bar' ? (
-                    <BarChart data={revenueData} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                        <XAxis dataKey="date" tick={{ fill: '#666', fontSize: 12 }} interval={xAxisInterval} />
-                        <YAxis tick={{ fill: '#666', fontSize: 12 }} />
-                        <Tooltip
-                            contentStyle={{
-                                backgroundColor: '#fff',
-                                border: '1px solid #e0e0e0',
-                                borderRadius: '4px',
-                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                            }}
-                            formatter={(value, name) => {
-                                if (name === 'actual') return [value, 'Actual Rooms'];
-                                return [value, 'Predicted Rooms'];
-                            }}
-                        />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
-                        <Bar dataKey="actual" fill="#ff6384" name="Actual Rooms" radius={[4, 4, 0, 0]} />
-                        <Bar dataKey="predicted" fill="#36a2eb" name="Predicted Rooms" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                ) : (
-                    <LineChart data={revenueData} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                        <XAxis dataKey="date" tick={{ fill: '#666', fontSize: 12 }} interval={xAxisInterval} />
-                        <YAxis tick={{ fill: '#666', fontSize: 12 }} />
-                        <Tooltip
-                            contentStyle={{
-                                backgroundColor: '#fff',
-                                border: '1px solid #e0e0e0',
-                                borderRadius: '4px',
-                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                            }}
-                            formatter={(value) => `$${value}`}
-                            labelFormatter={(label) => `Date: ${label}`}
-                        />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="line" />
-                        <Line type="monotone" dataKey="actual" stroke="rgb(255, 99, 132)" dot={false} strokeWidth={2} name="Actual Revenue" />
-                        <Line type="monotone" dataKey="predicted" stroke="rgb(54, 162, 235)" dot={false} strokeWidth={2} strokeDasharray="5 5" name="Predicted Revenue" />
-                    </LineChart>
-                )}
-            </ResponsiveContainer>
-        </div>
-    );
-};
+    </div>
+  );
+});
 
 export default RevenueGraph;

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../redux/store';
 import { fetchForecastAvailableDates, downloadForecastCSV } from '../../redux/services/api';
-import '../../stylesheet/ui/component-ui-download-forcast-csv.css';
 
 interface DownloadForcastCSVProps {
     hotelId: string;
@@ -72,11 +71,11 @@ const DownloadForcastCSV: React.FC<DownloadForcastCSVProps> = ({ hotelId }) => {
         const isEnd = date === endDate;
         const isInRange = date >= startDate && date <= endDate && startDate && endDate;
 
-        if (isStart) return 'ui-component-selected ui-component-start';
-        if (isEnd) return 'ui-component-selected ui-component-end';
-        if (isInRange) return 'ui-component-in-range';
-        if (isAvailable) return 'ui-component-available';
-        return '';
+        if (isStart) return 'bg-indigo-600 text-white hover:bg-indigo-700';
+        if (isEnd) return 'bg-indigo-600 text-white hover:bg-indigo-700';
+        if (isInRange) return 'bg-indigo-100 text-indigo-900';
+        if (isAvailable) return 'text-gray-900 hover:bg-gray-100 font-medium';
+        return 'text-gray-300 cursor-not-allowed';
     };
 
     const renderCalendar = (_selectedDate: string, isStartDate: boolean) => {
@@ -100,7 +99,7 @@ const DownloadForcastCSV: React.FC<DownloadForcastCSVProps> = ({ hotelId }) => {
         }
 
         return (
-            <div className="ui-component-calendar">
+            <div className="absolute z-10 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 p-4 w-80 max-h-96 overflow-y-auto">
                 {months.map((monthData, idx) => {
                     const monthDays = [];
                     const firstDay = new Date(monthData.year, monthData.month, 1);
@@ -135,18 +134,22 @@ const DownloadForcastCSV: React.FC<DownloadForcastCSVProps> = ({ hotelId }) => {
                     }
 
                     return (
-                        <div key={idx} className="ui-component-month">
-                            <h4 className="ui-component-month-header">{monthData.monthYear}</h4>
-                            <div className="ui-component-weekdays">
+                        <div key={idx} className="mb-6 last:mb-0">
+                            <h4 className="text-sm font-bold text-gray-900 mb-3 text-center">{monthData.monthYear}</h4>
+                            <div className="grid grid-cols-7 gap-1 mb-2">
                                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                                    <div key={day} className="ui-component-weekday">{day}</div>
+                                    <div key={day} className="text-xs font-medium text-gray-400 text-center">{day}</div>
                                 ))}
                             </div>
-                            <div className="ui-component-days">
+                            <div className="grid grid-cols-7 gap-1">
                                 {monthDays.map((day, dayIdx) => (
                                     <button
                                         key={dayIdx}
-                                        className={`ui-component-day ${day.isCurrentMonth ? '' : 'ui-component-other-month'} ${getDayClass(day.date)}`}
+                                        className={`
+                                            h-8 w-8 rounded-full text-xs flex items-center justify-center transition-colors duration-150
+                                            ${day.isCurrentMonth ? '' : 'invisible'}
+                                            ${getDayClass(day.date)}
+                                        `}
                                         onClick={() => {
                                             if (isDateAvailable(day.date)) {
                                                 if (isStartDate) {
@@ -172,78 +175,108 @@ const DownloadForcastCSV: React.FC<DownloadForcastCSVProps> = ({ hotelId }) => {
     };
 
     return (
-        <div className="ui-component-download-forcast-container">
-            <h2 className="ui-component-download-forcast-title">Download Forecast</h2>
-            <div className="ui-component-download-forcast-content">
-                {loading ? (
-                    <div className="ui-component-download-forcast-loading">Loading available dates...</div>
-                ) : (
-                    <>
-                        <div className="ui-component-download-forcast-calendars">
-                            <div className="ui-component-calendar-wrapper">
-                                <div className="ui-component-calendar-label">
-                                    <label>Start Date</label>
-                                    <button
-                                        className="ui-component-date-toggle"
-                                        onClick={() => setShowStartCalendar(!showStartCalendar)}
-                                    >
-                                        {startDate || 'Select Start Date'}
-                                    </button>
+        <div className="w-full">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
+                    <span className="mr-2">📈</span> Download Forecast
+                </h2>
+                <div className="space-y-6">
+                    {loading ? (
+                        <div className="flex items-center justify-center py-8 text-gray-500">
+                            <svg className="animate-spin h-5 w-5 mr-3 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Loading available dates...
+                        </div>
+                    ) : (
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="relative">
+                                    <div className="flex flex-col">
+                                        <label className="text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                                        <button
+                                            className="w-full px-4 py-2 text-left border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all duration-200 bg-white text-gray-900"
+                                            onClick={() => setShowStartCalendar(!showStartCalendar)}
+                                        >
+                                            {startDate || 'Select Start Date'}
+                                        </button>
+                                    </div>
+                                    {showStartCalendar && (
+                                        <>
+                                            <div className="fixed inset-0 z-0" onClick={() => setShowStartCalendar(false)}></div>
+                                            {renderCalendar(startDate, true)}
+                                        </>
+                                    )}
                                 </div>
-                                {showStartCalendar && (
-                                    <div className="ui-component-calendar-dropdown">
-                                        {renderCalendar(startDate, true)}
+
+                                <div className="relative">
+                                    <div className="flex flex-col">
+                                        <label className="text-sm font-medium text-gray-700 mb-2">End Date</label>
+                                        <button
+                                            className="w-full px-4 py-2 text-left border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all duration-200 bg-white text-gray-900"
+                                            onClick={() => setShowEndCalendar(!showEndCalendar)}
+                                        >
+                                            {endDate || 'Select End Date'}
+                                        </button>
+                                    </div>
+                                    {showEndCalendar && (
+                                        <>
+                                            <div className="fixed inset-0 z-0" onClick={() => setShowEndCalendar(false)}></div>
+                                            {renderCalendar(endDate, false)}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col items-end space-y-3">
+                                <button
+                                    onClick={handleDownload}
+                                    disabled={isDownloading || !startDate || !endDate}
+                                    className={`
+                                        inline-flex items-center px-6 py-2.5 rounded-lg text-sm font-medium text-white shadow-md transition-all duration-200
+                                        ${isDownloading || !startDate || !endDate
+                                            ? 'bg-gray-300 cursor-not-allowed'
+                                            : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg hover:-translate-y-0.5'
+                                        }
+                                    `}
+                                >
+                                    {isDownloading ? (
+                                        <>
+                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Downloading...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="mr-2">⬇️</span> Download CSV
+                                        </>
+                                    )}
+                                </button>
+
+                                {(downloadError || error) && (
+                                    <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg border border-red-100">
+                                        {downloadError || error}
                                     </div>
                                 )}
                             </div>
 
-                            <div className="ui-component-calendar-wrapper">
-                                <div className="ui-component-calendar-label">
-                                    <label>End Date</label>
-                                    <button
-                                        className="ui-component-date-toggle"
-                                        onClick={() => setShowEndCalendar(!showEndCalendar)}
-                                    >
-                                        {endDate || 'Select End Date'}
-                                    </button>
-                                </div>
-                                {showEndCalendar && (
-                                    <div className="ui-component-calendar-dropdown">
-                                        {renderCalendar(endDate, false)}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="ui-component-download-forcast-form">
-                            <button
-                                onClick={handleDownload}
-                                disabled={isDownloading || !startDate || !endDate}
-                                className="ui-component-download-forcast-button"
-                            >
-                                {isDownloading ? 'Downloading...' : 'Download CSV'}
-                            </button>
-
-                            {(downloadError || error) && (
-                                <div className="ui-component-download-forcast-error">
-                                    {downloadError || error}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="ui-component-download-forcast-info">
-                            <p className="ui-component-download-forcast-info-text">
-                                Download forecast data in CSV format for the selected date range.
-                                The file will include all forecast data including revenue, rooms sold, and occupancy predictions.
-                            </p>
-                            {minDate && maxDate && (
-                                <p className="ui-component-download-forcast-info-dates">
-                                    Available data range: {minDate} to {maxDate}
+                            <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                                <p className="text-sm text-gray-600 mb-2">
+                                    Download forecast data in CSV format for the selected date range.
+                                    The file will include all forecast data including revenue, rooms sold, and occupancy predictions.
                                 </p>
-                            )}
-                        </div>
-                    </>
-                )}
+                                {minDate && maxDate && (
+                                    <p className="text-xs text-gray-500 font-medium">
+                                        Available data range: <span className="text-indigo-600">{minDate}</span> to <span className="text-indigo-600">{maxDate}</span>
+                                    </p>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     );

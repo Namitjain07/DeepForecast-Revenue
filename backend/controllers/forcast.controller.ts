@@ -33,8 +33,8 @@ export const getAvailableDates = async (req: Request, res: Response) => {
             new Date(forecast.date).toISOString().split('T')[0]
         );
 
-        const minDate = forecasts[0].date;
-        const maxDate = forecasts[forecasts.length - 1].date;
+        const minDate = forecasts[0]!.date;
+        const maxDate = forecasts[forecasts.length - 1]!.date;
 
         res.status(200).json({
             message: 'Available forecast dates retrieved successfully',
