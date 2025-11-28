@@ -1,0 +1,316 @@
+\documentclass[letterpaper,11pt]{report}
+
+\usepackage{fullpage}
+\usepackage{verbatim}
+\usepackage{cite}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage[small]{caption}
+\usepackage{graphics}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage[dvips]{graphicx}
+
+% Paper conservation layout. Long live the trees!!
+\setlength{\oddsidemargin}{-0.4mm} % 25 mm left margin
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\textwidth}{160mm}      % 25 mm right margin
+\setlength{\topmargin}{-5.4mm}     % 20 mm top margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\footskip}{10mm}
+\setlength{\textheight}{237mm}     % 20 mm bottom margin
+
+\setlength{\parskip}{1ex}
+\parindent 0in
+
+\def\title{Hotel Revenue Prediction and Management System}
+
+\begin{document}
+
+% Cover Page (Simulated based on include)
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+        \Huge
+        \textbf{\title}
+        
+        \vspace{1.5cm}
+        \Large
+        \textbf{Project Report}
+        
+        \vspace{1.5cm}
+        \large
+        Submitted in partial fulfillment of the requirements for the degree of\\
+        \textbf{Bachelor of Technology}\\
+        in\\
+        \textbf{Computer Science \& Engineering}
+        
+        \vspace{2cm}
+        \textbf{Submitted by:}\\
+        Student Name
+        
+        \vspace{2cm}
+        \textbf{Under the Guidance of:}\\
+        Advisor Name
+        
+        \vspace{2cm}
+        \includegraphics[width=0.3\textwidth]{example-image} % Placeholder for logo
+        
+        \vspace{1cm}
+        \textbf{Indraprastha Institute of Information Technology, Delhi}
+        
+    \end{center}
+\end{titlepage}
+
+\newpage
+
+\begin{center}
+\textbf{\Large Student's Declaration}\label{section:declaration}
+\end{center}
+%\vspace{3in}
+I hereby declare that the work presented in the report entitled \textbf{``\title"} submitted by me for the partial fulfillment of the requirements for the degree of \emph{Bachelor of Technology} in \emph{Computer Science \& Engineering} at
+ Indraprastha Institute of Information Technology, Delhi, is an authentic record of my work carried out under guidance of \textbf{Advisor Name}. Due acknowledgements have  been given in the report to all material used. This work has not been submitted anywhere else for the reward of any other degree.
+ \\ \vspace{0.5in}
+
+\textbf{..............................}\hfill
+\textbf{ Place \& Date: .............................} \\
+\textbf{Student Name}
+
+\vspace{3in}
+
+\begin{center}
+\textbf{\Large Certificate} \label{section:certificate}
+\end{center}
+%\vspace{3in}
+This is to certify that the above statement made by the candidate is correct to the best of my knowledge.
+ \\ \vspace{0.4in}
+
+\textbf{..............................}\hfill
+\textbf{ Place \& Date: .............................} \\
+\textbf{Advisor Name}\\
+
+\pagebreak
+
+\begin{abstract}
+The hospitality industry relies heavily on accurate revenue forecasting to optimize pricing strategies, manage inventory, and maximize profitability. This report presents the design and implementation of a \textbf{Hotel Revenue Prediction and Management System}, a comprehensive full-stack web application developed using the MERN stack (MongoDB, Express.js, React.js, Node.js) and TypeScript.
+
+The system provides a robust platform for hotel owners and managers to digitize their daily operations by uploading historical performance data via CSV or Excel files. It features a sophisticated dashboard that visualizes key metrics such as Revenue, Rooms Sold, Occupancy Percentage, and Average Room Rate (ARR) using interactive charts powered by Recharts. Key features include granular role-based access control (Admin, Owner, Manager), secure JWT-based authentication, and a scalable backend architecture capable of handling multi-hotel management.
+
+The application leverages historical data analysis to provide actionable insights, enabling stakeholders to make data-driven decisions. The system's modular design allows for easy integration of advanced machine learning models for revenue forecasting, making it a valuable tool for modern hotel management.
+
+\vspace{2in}
+Keywords: Hotel Management, Revenue Prediction, MERN Stack, Web Development, Data Visualization, Machine Learning, Forecasting, TypeScript, Redux Toolkit, Cloudinary.
+\end{abstract}
+
+\newpage
+
+\section*{Acknowledgments}\label{section:acknowledgments}
+\pagestyle{plain}
+\pagenumbering{roman}
+
+I would like to express my deepest gratitude to my advisor, \textbf{Advisor Name}, for their invaluable guidance, continuous support, and patience throughout the development of this project. Their insights and feedback were instrumental in shaping the direction of this work.
+
+I am also grateful to the faculty and staff of the Computer Science \& Engineering department at IIIT Delhi for providing the necessary resources and environment for learning.
+
+Finally, I would like to thank my family and friends for their encouragement and understanding during the course of this project.
+
+\vspace{2in}
+\section*{Work Distribution}
+The work for this project was distributed as follows:
+
+\begin{itemize}
+    \item \textbf{Phase 1: Requirement Analysis \& System Design} - Defined the scope, user roles, and database schema. Designed the API architecture and frontend wireframes.
+    \item \textbf{Phase 2: Backend Development} - Implemented the RESTful API using Node.js and Express. Set up MongoDB with Mongoose schemas for Users, Hotels, Records, and Forecasts. Implemented JWT authentication and role-based middleware.
+    \item \textbf{Phase 3: Frontend Development} - Built the user interface using React and Vite. Integrated Redux Toolkit for state management. Developed interactive dashboards with Recharts and implemented CSV upload functionality.
+    \item \textbf{Phase 4: Integration \& Testing} - Connected frontend with backend APIs. Performed unit testing and integration testing. Fixed bugs and optimized performance.
+    \item \textbf{Phase 5: Documentation & Reporting} - Prepared the final project report and documentation.
+\end{itemize}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+\mbox{}
+
+\chapter{Introduction}\label{chapter:introduction}
+\pagestyle{fancy}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\onehalfspacing
+
+\section{Overview}
+In the competitive hospitality sector, the ability to accurately predict future revenue and occupancy is a critical competitive advantage. Hotels generate vast amounts of data daily, including room rates, occupancy levels, and guest demographics. However, many establishments struggle to leverage this data effectively. The \textbf{Hotel Revenue Prediction and Management System} addresses this challenge by providing a unified platform for data management, visualization, and forecasting.
+
+\section{Problem Statement}
+Hotel managers often rely on fragmented tools or manual spreadsheets to track daily performance metrics, leading to several critical issues:
+\begin{itemize}
+    \item \textbf{Data Fragmentation:} Daily records of "Rooms Sold", "Revenue", and "Occupancy" are often scattered across multiple Excel files, making historical analysis difficult.
+    \item \textbf{Manual Errors:} Manual entry of data such as `Arrival Rooms`, `Departure Rooms`, and `PAX` counts is prone to human error, leading to inaccurate financial reporting.
+    \item \textbf{Lack of Visualization:} Raw spreadsheet data fails to provide immediate visual insights into long-term trends, seasonality, and occupancy patterns.
+    \item \textbf{Inability to Forecast:} Without a centralized database of historical performance, applying predictive models to forecast future revenue is nearly impossible.
+    \item \textbf{Access Control Issues:} Spreadsheets lack sophisticated role-based security, making it difficult to restrict sensitive financial data to authorized personnel only.
+\end{itemize}
+
+\section{Proposed Solution}
+This project delivers a centralized, web-based solution that automates the revenue management process. The system allows users to:
+\begin{itemize}
+    \item \textbf{Centralize Data:} Securely store and manage historical data for multiple hotels in a MongoDB database.
+    \item \textbf{Bulk Data Ingestion:} Upload historical records in bulk using CSV or XLSX files with automated client-side validation to ensure data integrity.
+    \item \textbf{Visualize Performance:} View interactive graphs for Revenue, Rooms Sold, Arrival/Departure rooms, and Out of Order (OOO) rooms using dynamic charting libraries.
+    \item \textbf{Forecast Trends:} Utilize historical data to predict future performance metrics, aiding in inventory management.
+    \item \textbf{Manage Access:} Distinct roles for Admins (system-wide access), Owners (hotel-specific access), and Managers (operational access) ensure data security.
+\end{itemize}
+
+\section{Scope of the Project}
+The project encompasses the full software development lifecycle, from database design to frontend implementation. It focuses on:
+\begin{itemize}
+    \item Developing a RESTful API for data handling.
+    \item Creating a responsive and intuitive user interface.
+    \item Implementing secure authentication and authorization.
+    \item Integrating data visualization libraries for analytics.
+\end{itemize}
+
+\chapter{System Design and Architecture}
+
+\section{Technology Stack}
+The project is built using the MERN stack, chosen for its scalability, performance, and unified JavaScript/TypeScript development experience.
+
+\begin{itemize}
+    \item \textbf{Frontend:}
+    \begin{itemize}
+        \item \textbf{React.js (v19) with Vite:} For building a fast, interactive Single Page Application (SPA).
+        \item \textbf{TypeScript:} Ensures type safety and reduces runtime errors.
+        \item \textbf{Redux Toolkit:} Manages global application state, including authentication and dashboard data.
+        \item \textbf{Tailwind CSS:} A utility-first CSS framework for rapid and responsive UI design.
+        \item \textbf{Recharts & ECharts:} For rendering complex, interactive data visualizations.
+        \item \textbf{XLSX:} For parsing Excel and CSV files directly in the browser.
+    \end{itemize}
+    \item \textbf{Backend:}
+    \begin{itemize}
+        \item \textbf{Node.js & Express.js:} Provides a robust runtime and framework for the RESTful API.
+        \item \textbf{TypeScript:} Maintains code quality and consistency across the full stack.
+        \item \textbf{Swagger (swagger-jsdoc):} Generates interactive API documentation.
+        \item \textbf{Cloudinary:} Used for secure cloud storage of uploaded assets.
+    \end{itemize}
+    \item \textbf{Database:}
+    \begin{itemize}
+        \item \textbf{MongoDB:} A NoSQL database chosen for its flexibility in handling document-based data.
+        \item \textbf{Mongoose:} An Object Data Modeling (ODM) library for schema validation and query building.
+    \end{itemize}
+    \item \textbf{Authentication:}
+    \begin{itemize}
+        \item \textbf{JSON Web Tokens (JWT):} For secure, stateless user authentication.
+        \item \textbf{Bcrypt.js:} For hashing and salting user passwords.
+    \end{itemize}
+\end{itemize}
+
+\section{System Architecture}
+The system follows a classic Client-Server architecture. The React frontend communicates with the Express backend via RESTful APIs. The backend handles business logic, authentication, and interacts with the MongoDB database.
+
+\begin{figure}[h]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{architecture_diagram}
+    \caption{High-Level System Architecture}
+    \label{fig:architecture}
+\end{figure}
+
+\section{Database Schema}
+The database is designed to support multi-tenancy (multiple hotels) and historical data tracking. Key collections include:
+
+\begin{itemize}
+    \item \textbf{Users:} Stores user credentials, roles (Admin, Owner, Manager), and associated `hotelId`.
+    \item \textbf{Hotels:} Stores hotel details, location, and configuration.
+    \item \textbf{Records:} The core collection for historical data. Each document represents a single day's performance for a hotel and includes:
+    \begin{itemize}
+        \item `date`, `day`: Temporal markers.
+        \item `roomsSold`, `totalRoomInventory`: Occupancy metrics.
+        \item `roomRevenue`, `averageRoomRate` (ARR): Financial metrics.
+        \item `arrivalRooms`, `departureRooms`: Operational metrics.
+        \item `oooRooms` (Out of Order), `complimentRooms`, `houseUse`: Inventory adjustments.
+        \item `pax`: Guest count.
+    \end{itemize}
+    \item \textbf{Forecasts:} Stores predicted data generated by the system, mirroring the structure of Records but for future dates.
+    \item \textbf{LastTrain:} Tracks the status of model training jobs for specific hotels to prevent redundant processing.
+\end{itemize}
+
+\chapter{Implementation Details}
+
+\section{Backend Implementation}
+The backend is structured using a controller-service-repository pattern to ensure code maintainability.
+
+\subsection{Authentication \& Security}
+Security is paramount. We implemented a robust middleware system in `auth.middleware.ts`:
+\begin{itemize}
+    \item \textbf{JWT Authentication:} The `protect` middleware verifies the Bearer token from the request header, decodes the payload, and attaches the user object to the request.
+    \item \textbf{Role-Based Access Control (RBAC):} Specific middleware functions like `adminOnly`, `ownerOnly`, and `ownerOrManagerOnly` ensure that sensitive endpoints (e.g., adding a new hotel, deleting records) are restricted to authorized roles.
+    \item \textbf{Input Validation:} All incoming requests are validated to prevent injection attacks and ensure data integrity.
+\end{itemize}
+
+\subsection{Data Management APIs}
+\begin{itemize}
+    \item \textbf{Upload Controller:} Handles the parsing of CSV files containing historical hotel records. It validates the data format before bulk inserting it into the `Records` collection.
+    \item \textbf{Forecast Controller:} The `forecast.controller.ts` provides endpoints to retrieve forecast data aggregated by time periods (1 week, 1 month, 3 months, etc.). It calculates derived metrics like average revenue and total rooms sold for the requested period.
+    \item \textbf{Train Controller:} Manages the initiation of model training jobs, creating `LastTrain` records to track job status (`queued`, `processing`, `completed`).
+\end{itemize}
+
+\section{Frontend Implementation}
+The frontend is a Single Page Application (SPA) built with React and Vite for fast development and build times.
+
+\subsection{State Management}
+Redux Toolkit is used to manage global state, ensuring a predictable state container:
+\begin{itemize}
+    \item \textbf{Auth Slice (`authSlice.ts`):} Manages user login status, token storage, and persistence using `localStorage`. It handles actions like `loginStart`, `loginSuccess`, and `logout`.
+    \item \textbf{Dashboard Slice:} Caches dashboard metrics to reduce API calls and improve performance.
+    \item \textbf{Hotel Slice:} Manages the currently selected hotel context, allowing the user to switch between properties seamlessly.
+\end{itemize}
+
+\subsection{Data Ingestion Component}
+The `CSVUploader.tsx` component provides a user-friendly interface for data entry.
+\begin{itemize}
+    \item \textbf{Client-Side Parsing:} Uses the `xlsx` library to parse Excel and CSV files directly in the browser.
+    \item \textbf{Validation:} Strictly validates the presence of required columns (e.g., `Date`, `Rooms Sold`, `Revenue`) and data types before sending data to the backend.
+    \item \textbf{Feedback:} Provides real-time progress bars and success/error messages to the user.
+\end{itemize}
+
+\subsection{Visualization Components}
+We utilized `Recharts` to create interactive graphs that allow users to visualize trends.
+\begin{itemize}
+    \item \textbf{RevenueGraph:} Displays a dual-line chart comparing historical revenue against forecasted revenue.
+    \item \textbf{RoomSoldGraph:} Visualizes occupancy trends over time.
+    \item \textbf{ForecastDayViewer:} A detailed view allowing users to inspect specific forecast dates and their associated metrics.
+\end{itemize}
+
+\chapter{Results and Discussion}
+
+\section{User Interface}
+The application features a clean, modern dashboard designed for usability.
+\begin{itemize}
+    \item \textbf{Admin Dashboard:} Provides a high-level view of all hotels and system users. Admins can add new hotels and manage user accounts.
+    \item \textbf{Hotel Dashboard:} Shows specific metrics for a selected property. It includes "Recent Records" tables and "Upcoming Forecasts" summaries.
+    \item \textbf{Data Upload Interface:} The drag-and-drop CSV uploader simplifies the process of adding historical data, with immediate feedback on file validity.
+\end{itemize}
+
+\section{Forecasting Capabilities}
+The system successfully ingests historical CSV data and presents it in a structured format. The forecasting module (represented by `Forecast` models) allows the system to store and retrieve predicted values. Users can view forecasts for different time horizons (1 week, 1 month, 3 months), enabling them to compare actual performance against predicted targets and adjust their strategies accordingly.
+
+\section{Performance}
+The use of MongoDB indexing on `hotelId` and `date` fields ensures fast query performance even as the dataset grows. The frontend is optimized with code-splitting and lazy loading to ensure fast load times. The use of Redux for state management minimizes unnecessary re-renders and API calls.
+
+\chapter{Conclusion and Future Work}
+
+\section{Conclusion}
+The Hotel Revenue Prediction and Management System successfully addresses the need for a digital, automated solution for hotel revenue management. By combining a user-friendly interface with a powerful backend, it empowers hotel operators to move away from manual spreadsheets and towards data-driven decision-making.
+
+\section{Future Work}
+\begin{itemize}
+    \item \textbf{Advanced ML Integration:} Integrate a Python-based microservice (e.g., using Flask/FastAPI) to run advanced time-series forecasting models (ARIMA, LSTM) in real-time.
+    \item \textbf{PMS Integration:} Build connectors for popular Property Management Systems (PMS) to automate data ingestion.
+    \item \textbf{Mobile App:} Develop a React Native mobile application for on-the-go management.
+\end{itemize}
+
+\bibliographystyle{acm}
+\bibliography{sample}
+
+\end{document}

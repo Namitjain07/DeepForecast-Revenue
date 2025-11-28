@@ -2,7 +2,6 @@
 import bcrypt from 'bcryptjs';
 // @ts-ignore
 import jwt from 'jsonwebtoken';
-import { Types } from 'mongoose';
 // @ts-ignore
 import crypto from 'crypto';
 

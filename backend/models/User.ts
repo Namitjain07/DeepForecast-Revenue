@@ -41,4 +41,7 @@ const UserSchema = new Schema<IUser>({
     timestamps: true
 });
 
+// Index for faster queries by hotel
+UserSchema.index({ hotelId: 1 });
+
 export default model<IUser>('User', UserSchema);

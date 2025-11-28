@@ -220,10 +220,10 @@ export const searchHotels = async (req: Request, res: Response) => {
                 );
 
                 // Find manager user for this hotel
-                const manager = await User.findOne(
-                    { hotelId: hotel._id, role: 'manager' },
-                    'name'
-                );
+                // const manager = await User.findOne(
+                //     { hotelId: hotel._id, role: 'manager' },
+                //     'name'
+                // );
 
                 return {
                     id: hotel._id,

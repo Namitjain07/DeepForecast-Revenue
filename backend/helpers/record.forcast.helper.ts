@@ -85,16 +85,16 @@ export const aggregateMetric = (records: any[], metric: string, aggregationDays:
     records.forEach(record => {
         const date = new Date(record.date);
         const bucketKey = new Date(date.getFullYear(), date.getMonth(), Math.floor(date.getDate() / aggregationDays) * aggregationDays);
-        const key = bucketKey.toISOString().split('T')[0];
+        const key = bucketKey.toISOString().split('T')[0]!;
 
         if (!buckets[key]) {
             buckets[key] = [];
         }
-        buckets[key].push(record);
+        buckets[key]!.push(record);
     });
 
     Object.keys(buckets).sort().forEach(key => {
-        const bucket = buckets[key];
+        const bucket = buckets[key]!;
         const sum = bucket.reduce((acc: number, r: any) => acc + (r[metric] || 0), 0);
         const avg = Math.round(sum / bucket.length);
         aggregated.push({

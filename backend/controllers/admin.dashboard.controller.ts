@@ -2,15 +2,7 @@ import { Request, Response } from 'express';
 import Hotel from '../models/Hotel';
 import User from '../models/User';
 
-class ApiError extends Error {
-    statusCode: number;
-    constructor(message: string, statusCode: number) {
-        super(message);
-        this.statusCode = statusCode;
-    }
-}
-
-export const getDashboardStats = async (req: Request, res: Response) => {
+export const getDashboardStats = async (_req: Request, res: Response) => {
     try {
         // Get total number of hotels
         const totalHotels = await Hotel.countDocuments();

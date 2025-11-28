@@ -38,9 +38,9 @@ export const login = async (req: Request, res: Response) => {
 
             return res.status(200).json({
                 message: 'Login successful',
-                token: generateToken(admin._id.toString(), 'admin'),
+                token: generateToken((admin as any)._id.toString(), 'admin'),
                 user: {
-                    id: admin._id,
+                    id: (admin as any)._id,
                     name: admin.name,
                     email: admin.email,
                     role: 'admin',
@@ -69,9 +69,9 @@ export const login = async (req: Request, res: Response) => {
 
         return res.status(200).json({
             message: 'Login successful',
-            token: generateToken(user._id.toString(), user.role),
+            token: generateToken((user as any)._id.toString(), user.role),
             user: {
-                id: user._id,
+                id: (user as any)._id,
                 hotelId: user.hotelId,
                 name: user.name,
                 email: user.email,

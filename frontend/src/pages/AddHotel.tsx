@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import AdminNavbar from "../components/dashboard/AdminNavbar";
 import { useAppDispatch } from "../redux/hooks";
 import { addHotel } from "../redux/services/api";
-import "../stylesheet/pages/page-add-hotel.css";
 
 const AddHotel: React.FC = () => {
     const role =
@@ -111,169 +110,133 @@ const AddHotel: React.FC = () => {
         }
     };
 
+    const InputField = ({ name, placeholder, type = "text", required = false, value }: any) => (
+        <input
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            value={value}
+            onChange={handleChange}
+            required={required}
+            className="block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
+        />
+    );
+
     return (
-        <div className="page-add-hotel">
+        <div className="min-h-screen bg-gray-50">
             <AdminNavbar role={role} />
 
-            <div className="page-add-hotel-container">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
-                <div className="page-add-hotel-header">
+                <div className="flex items-center justify-between mb-8">
                     <button
-                        className="page-add-hotel-back-btn"
+                        className="text-gray-500 hover:text-indigo-600 font-medium transition-colors duration-200 flex items-center"
                         onClick={() => navigate(-1)}
                     >
-                        ← Back to Hotels
+                        <span className="mr-2">←</span> Back to Hotels
                     </button>
-                    <h1>Add New Hotel</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Add New Hotel</h1>
                 </div>
 
                 {/* Error Message */}
                 {error && (
-                    <div className="page-add-hotel-error-message">
-                        {error}
+                    <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg shadow-sm animate-pulse">
+                        <p className="font-medium">Error</p>
+                        <p className="text-sm">{error}</p>
                     </div>
                 )}
 
                 {/* Stepper */}
-                <div className="page-add-hotel-steps">
-                    <div
-                        className={`page-add-hotel-step ${
-                            step >= 1 ? "active" : ""
-                        }`}
-                    >
-                        <div className="step-circle">1</div>
-                        <p>Hotel Information</p>
+                <div className="flex items-center justify-center mb-10">
+                    <div className={`flex flex-col items-center ${step >= 1 ? "text-indigo-600" : "text-gray-400"}`}>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg mb-2 transition-colors duration-300 ${step >= 1 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200" : "bg-gray-200 text-gray-500"}`}>
+                            1
+                        </div>
+                        <span className="text-sm font-medium">Hotel Information</span>
                     </div>
-                    <div className="step-line" />
-                    <div
-                        className={`page-add-hotel-step ${
-                            step === 2 ? "active" : ""
-                        }`}
-                    >
-                        <div className="step-circle">2</div>
-                        <p>Add Staff</p>
+                    <div className={`w-24 h-1 bg-gray-200 mx-4 rounded-full overflow-hidden`}>
+                        <div className={`h-full bg-indigo-600 transition-all duration-500 ease-out ${step === 2 ? "w-full" : "w-0"}`}></div>
+                    </div>
+                    <div className={`flex flex-col items-center ${step === 2 ? "text-indigo-600" : "text-gray-400"}`}>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg mb-2 transition-colors duration-300 ${step === 2 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200" : "bg-gray-200 text-gray-500"}`}>
+                            2
+                        </div>
+                        <span className="text-sm font-medium">Add Staff</span>
                     </div>
                 </div>
 
                 {/* Step 1: Hotel Info */}
                 {step === 1 && (
-                    <div className="page-add-hotel-form-card">
-                        <h2 className="page-add-hotel-section-title">🏨 Hotel Information</h2>
-                        <form onSubmit={(e) => e.preventDefault()} className="page-add-hotel-form">
+                    <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                        <div className="px-8 py-6 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-100">
+                            <h2 className="text-xl font-bold text-gray-800 flex items-center">
+                                <span className="mr-2">🏨</span> Hotel Information
+                            </h2>
+                        </div>
+                        
+                        <form onSubmit={(e) => e.preventDefault()} className="p-8 space-y-6">
                             {/* Hotel Image Upload */}
-                            <div className="page-add-hotel-image-section">
-                                <label className="page-add-hotel-image-label">
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
                                     Hotel Image
                                 </label>
-                                <div className="page-add-hotel-image-upload">
+                                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-indigo-500 transition-colors duration-200 bg-gray-50 hover:bg-indigo-50/30 cursor-pointer group">
                                     {imagePreview ? (
-                                        <div className="page-add-hotel-image-preview">
-                                            <img src={imagePreview} alt="Hotel preview" />
+                                        <div className="relative w-full h-64">
+                                            <img src={imagePreview} alt="Hotel preview" className="w-full h-full object-cover rounded-lg shadow-md" />
                                             <button
                                                 type="button"
-                                                className="page-add-hotel-image-remove-btn"
-                                                onClick={() => {
-                                                    setImagePreview(null);
-                                                }}
+                                                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors shadow-lg"
+                                                onClick={() => setImagePreview(null)}
                                             >
-                                                ✕ Remove
+                                                ✕
                                             </button>
                                         </div>
                                     ) : (
-                                        <label className="page-add-hotel-upload-box">
+                                        <label className="space-y-1 text-center cursor-pointer w-full h-full flex flex-col items-center justify-center">
                                             <input
                                                 type="file"
                                                 accept="image/*"
                                                 onChange={handleImageChange}
-                                                style={{ display: "none" }}
+                                                className="sr-only"
                                             />
-                                            <div className="upload-placeholder">
-                                                <span>📷 Click to upload hotel image</span>
-                                                <p>Supported formats: JPG, PNG, WebP</p>
+                                            <div className="text-5xl mb-3 group-hover:scale-110 transition-transform duration-200">📷</div>
+                                            <div className="flex text-sm text-gray-600">
+                                                <span className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                                    Upload a file
+                                                </span>
+                                                <p className="pl-1">or drag and drop</p>
                                             </div>
+                                            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                                         </label>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="page-add-hotel-row">
-                                <input
-                                    type="text"
-                                    name="name"
-                                    placeholder="Hotel Name *"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <input
-                                    type="email"
-                                    name="email"
-                                    placeholder="Hotel Email *"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <InputField name="name" placeholder="Hotel Name *" value={formData.name} required />
+                                <InputField name="email" placeholder="Hotel Email *" value={formData.email} required type="email" />
                             </div>
 
-                            <div className="page-add-hotel-row">
-                                <input
-                                    type="tel"
-                                    name="contactNumber"
-                                    placeholder="Contact Number *"
-                                    value={formData.contactNumber}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    name="plotNo"
-                                    placeholder="Plot Number"
-                                    value={formData.plotNo}
-                                    onChange={handleChange}
-                                />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <InputField name="contactNumber" placeholder="Contact Number *" value={formData.contactNumber} required type="tel" />
+                                <InputField name="plotNo" placeholder="Plot Number" value={formData.plotNo} />
                             </div>
 
-                            <div className="page-add-hotel-row">
-                                <input
-                                    type="text"
-                                    name="streetName"
-                                    placeholder="Street Name"
-                                    value={formData.streetName}
-                                    onChange={handleChange}
-                                />
+                            <div>
+                                <InputField name="streetName" placeholder="Street Name" value={formData.streetName} />
                             </div>
 
-                            <div className="page-add-hotel-row">
-                                <input
-                                    type="text"
-                                    name="city"
-                                    placeholder="City *"
-                                    value={formData.city}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    name="state"
-                                    placeholder="State *"
-                                    value={formData.state}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    name="pincode"
-                                    placeholder="Pincode *"
-                                    value={formData.pincode}
-                                    onChange={handleChange}
-                                    required
-                                />
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <InputField name="city" placeholder="City *" value={formData.city} required />
+                                <InputField name="state" placeholder="State *" value={formData.state} required />
+                                <InputField name="pincode" placeholder="Pincode *" value={formData.pincode} required />
                             </div>
 
-                            <div className="page-add-hotel-actions">
+                            <div className="pt-4 flex justify-end">
                                 <button
                                     type="button"
-                                    className="page-add-hotel-next-btn"
+                                    className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:-translate-y-0.5 transition-all duration-200"
                                     onClick={handleNext}
                                 >
                                     Next Step →
@@ -285,74 +248,28 @@ const AddHotel: React.FC = () => {
 
                 {/* Step 2: Add Staff */}
                 {step === 2 && (
-                    <form onSubmit={handleSubmit}>
-                        <div className="page-add-hotel-form-card">
-                            <h2 className="page-add-hotel-section-title">👤 Add Owner</h2>
-                            <div className="page-add-hotel-row">
-                                <input
-                                    type="text"
-                                    name="ownerName"
-                                    placeholder="Owner Name *"
-                                    value={formData.ownerName}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <input
-                                    type="email"
-                                    name="ownerEmail"
-                                    placeholder="Owner Email *"
-                                    value={formData.ownerEmail}
-                                    onChange={handleChange}
-                                    required
-                                />
+                    <form onSubmit={handleSubmit} className="space-y-8">
+                        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                            <div className="px-8 py-6 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-100">
+                                <h2 className="text-xl font-bold text-gray-800 flex items-center">
+                                    <span className="mr-2">👤</span> Add Owner
+                                </h2>
                             </div>
-                            <div className="page-add-hotel-row">
-                                <input
-                                    type="password"
-                                    name="ownerPassword"
-                                    placeholder="Password *"
-                                    value={formData.ownerPassword}
-                                    onChange={handleChange}
-                                    required
-                                />
+                            <div className="p-8 space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <InputField name="ownerName" placeholder="Owner Name *" value={formData.ownerName} required />
+                                    <InputField name="ownerEmail" placeholder="Owner Email *" value={formData.ownerEmail} required type="email" />
+                                </div>
+                                <div>
+                                    <InputField name="ownerPassword" placeholder="Password *" value={formData.ownerPassword} required type="password" />
+                                </div>
                             </div>
                         </div>
 
-                        {/*<div className="page-add-hotel-form-card">*/}
-                        {/*    <h2 className="page-add-hotel-section-title">*/}
-                        {/*        👥 Add Manager (Optional)*/}
-                        {/*    </h2>*/}
-                        {/*    <div className="page-add-hotel-row">*/}
-                        {/*        <input*/}
-                        {/*            type="text"*/}
-                        {/*            name="managerName"*/}
-                        {/*            placeholder="Manager Name"*/}
-                        {/*            value={formData.managerName}*/}
-                        {/*            onChange={handleChange}*/}
-                        {/*        />*/}
-                        {/*        <input*/}
-                        {/*            type="email"*/}
-                        {/*            name="managerEmail"*/}
-                        {/*            placeholder="Manager Email"*/}
-                        {/*            value={formData.managerEmail}*/}
-                        {/*            onChange={handleChange}*/}
-                        {/*        />*/}
-                        {/*    </div>*/}
-                        {/*    <div className="page-add-hotel-row">*/}
-                        {/*        <input*/}
-                        {/*            type="password"*/}
-                        {/*            name="managerPassword"*/}
-                        {/*            placeholder="Password"*/}
-                        {/*            value={formData.managerPassword}*/}
-                        {/*            onChange={handleChange}*/}
-                        {/*        />*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
-
-                        <div className="page-add-hotel-actions between">
+                        <div className="flex justify-between pt-4">
                             <button
                                 type="button"
-                                className="page-add-hotel-back-btn-outline"
+                                className="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
                                 onClick={handleBack}
                                 disabled={loading}
                             >
@@ -360,10 +277,20 @@ const AddHotel: React.FC = () => {
                             </button>
                             <button
                                 type="submit"
-                                className="page-add-hotel-create-btn"
+                                className={`inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:-translate-y-0.5 transition-all duration-200 ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
                                 disabled={loading}
                             >
-                                {loading ? "Creating..." : "✓ Create Hotel"}
+                                {loading ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Creating...
+                                    </>
+                                ) : (
+                                    "✓ Create Hotel"
+                                )}
                             </button>
                         </div>
                     </form>

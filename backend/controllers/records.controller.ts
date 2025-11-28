@@ -43,7 +43,7 @@ export const addRecords = async (req: Request, res: Response) => {
             }
 
 
-            let recordDate: Date;
+            let recordDate: Date | undefined;
 
             if (typeof record.date === 'string') {
                 console.log("mew1");
@@ -111,8 +111,8 @@ export const addRecords = async (req: Request, res: Response) => {
                 );
             }
 
-// ✅ Final validation
-            if (isNaN(recordDate.getTime())) {
+            // ✅ Final validation
+            if (!recordDate || isNaN(recordDate.getTime())) {
                 throw new ApiError(
                     `Record ${index + 1} has invalid date format. Supported formats: YYYY-MM-DD, YYYY/MM/DD, DD-MM-YYYY, DD/MM/YYYY, or Excel serial number.`,
                     400
@@ -146,8 +146,8 @@ export const addRecords = async (req: Request, res: Response) => {
 
         // Validate that all new record dates are continuous (each day follows previous by 1 day)
         for (let i = 1; i < preparedRecords.length; i++) {
-            const currentDate = new Date(preparedRecords[i].date);
-            const previousDate = new Date(preparedRecords[i - 1].date);
+            const currentDate = new Date(preparedRecords[i]!.date);
+            const previousDate = new Date(preparedRecords[i - 1]!.date);
 
             // Normalize both dates to UTC midnight for accurate day comparison
             const currentDateUTC = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate()));
@@ -166,7 +166,7 @@ export const addRecords = async (req: Request, res: Response) => {
 
         // Validate that first new record's date is exactly 1 day after the last stored record
         if (lastStoredRecord) {
-            const firstNewDate = new Date(preparedRecords[0].date);
+            const firstNewDate = new Date(preparedRecords[0]!.date);
             const lastStoredDate = new Date(lastStoredRecord.date);
 
             // Normalize both dates to UTC midnight for accurate day comparison
@@ -239,8 +239,8 @@ export const getAvailableDates = async (req: Request, res: Response) => {
             timestamp: record.date
         }));
 
-        const minDate = records[0].date;
-        const maxDate = records[records.length - 1].date;
+        const minDate = records[0]!.date;
+        const maxDate = records[records.length - 1]!.date;
 
         res.status(200).json({
             message: 'Available dates retrieved successfully',

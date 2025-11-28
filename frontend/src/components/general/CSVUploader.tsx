@@ -1,9 +1,8 @@
 import React, { useState, useRef,} from 'react';
-import * as XLSX from 'xlsx';
+import readXlsxFile from 'read-excel-file';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../redux/store';
 import { addRecordsToHotel } from '../../redux/services/recordsApi';
-import '../../stylesheet/ui/component-ui-csv-uploader.css';
 
 interface CSVUploaderProps {
     hotelId: string;
@@ -36,37 +35,30 @@ const CSVUploader: React.FC<CSVUploaderProps> = ({ hotelId, onSuccess }) => {
 
 
     const parseXLSX = async (file: File): Promise<any[]> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
+        try {
+            const rows = await readXlsxFile(file);
+            
+            if (rows.length < 2) {
+                throw new Error('Excel file must have at least header row and one data row');
+            }
 
-            reader.onload = (e) => {
-                try {
-                    const data = e.target?.result;
-                    const workbook = XLSX.read(data, { type: 'binary' });
-                    const sheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[sheetName];
+            const headers = rows[0] as string[];
+            const data = rows.slice(1);
 
-                    // Convert to JSON
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+            // Convert to array of objects
+            const jsonData = data.map((row) => {
+                const obj: any = {};
+                headers.forEach((header, index) => {
+                    obj[header] = row[index];
+                });
+                return obj;
+            });
 
-                    if (jsonData.length === 0) {
-                        throw new Error('Excel file contains no data');
-                    }
-
-                    // Validate and convert
-                    const records = convertToRecords(jsonData);
-                    resolve(records);
-                } catch (err: any) {
-                    reject(new Error(`Failed to parse XLSX: ${err.message}`));
-                }
-            };
-
-            reader.onerror = () => {
-                reject(new Error('Failed to read XLSX file'));
-            };
-
-            reader.readAsBinaryString(file);
-        });
+            // Validate and convert
+            return convertToRecords(jsonData);
+        } catch (err: any) {
+            throw new Error(`Failed to parse XLSX: ${err.message}`);
+        }
     };
 
     const parseCSV = (csvText: string): any[] => {
@@ -226,7 +218,7 @@ const CSVUploader: React.FC<CSVUploaderProps> = ({ hotelId, onSuccess }) => {
 
         // Validate file type
         const isCSV = file.name.endsWith('.csv');
-        const isXLSX = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+        const isXLSX = file.name.endsWith('.xlsx');
 
         if (!isCSV && !isXLSX) {
             setError('Please upload a CSV or XLSX file');
@@ -290,69 +282,76 @@ const CSVUploader: React.FC<CSVUploaderProps> = ({ hotelId, onSuccess }) => {
     };
 
     return (
-        <div className="component-ui-csv-uploader-container">
-            <div className="component-ui-csv-uploader-card">
-                <h3 className="component-ui-csv-uploader-title">📊 Upload Records via CSV/XLSX</h3>
-                <p className="component-ui-csv-uploader-description">
+        <div className="w-full">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-center">
+                    <span className="mr-2">📊</span> Upload Records via CSV/XLSX
+                </h3>
+                <p className="text-sm text-gray-500 mb-6">
                     Upload hotel records from a CSV or Excel file. The file must contain all required columns.
                 </p>
 
                 {/* Error/Success Messages */}
                 {error && (
-                    <div className="component-ui-csv-uploader-error">
+                    <div className="mb-4 p-3 bg-red-50 border border-red-100 text-red-700 rounded-lg text-sm">
                         {error}
                     </div>
                 )}
                 {success && (
-                    <div className="component-ui-csv-uploader-success">
+                    <div className="mb-4 p-3 bg-green-50 border border-green-100 text-green-700 rounded-lg text-sm">
                         {success}
                     </div>
                 )}
 
                 {/* Upload Area */}
                 <div
-                    className="component-ui-csv-uploader-zone"
+                    className={`relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 group ${
+                        isProcessing ? 'border-indigo-300 bg-indigo-50' : 'border-gray-300 hover:border-indigo-500 hover:bg-gray-50'
+                    }`}
                     onClick={handleClick}
                 >
                     <input
                         ref={fileInputRef}
                         type="file"
-                        accept=".csv,.xlsx,.xls"
+                        accept=".csv,.xlsx"
                         onChange={handleFileSelect}
                         disabled={isProcessing}
                         style={{ display: 'none' }}
                     />
 
                     {isProcessing ? (
-                        <div className="component-ui-csv-uploader-processing">
-                            <div className="component-ui-csv-uploader-spinner"></div>
-                            <p>Processing... {uploadProgress}%</p>
-                            <div className="component-ui-csv-uploader-progress-bar">
+                        <div className="flex flex-col items-center justify-center">
+                            <svg className="animate-spin h-8 w-8 text-indigo-600 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <p className="text-sm font-medium text-indigo-600 mb-2">Processing... {uploadProgress}%</p>
+                            <div className="w-full max-w-xs bg-gray-200 rounded-full h-2">
                                 <div
-                                    className="component-ui-csv-uploader-progress-fill"
+                                    className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
                                     style={{ width: `${uploadProgress}%` }}
                                 ></div>
                             </div>
                         </div>
                     ) : (
                         <>
-                            <div className="component-ui-csv-uploader-icon">📁</div>
-                            <p className="component-ui-csv-uploader-text">
-                                <strong>Click to upload CSV or XLSX</strong> or drag and drop
+                            <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-200">📁</div>
+                            <p className="text-sm text-gray-900 font-medium mb-1">
+                                <span className="text-indigo-600">Click to upload CSV or XLSX</span> or drag and drop
                             </p>
-                            <p className="component-ui-csv-uploader-hint">
-                                Supported formats: CSV, XLS, XLSX
+                            <p className="text-xs text-gray-500">
+                                Supported formats: CSV, XLSX
                             </p>
                         </>
                     )}
                 </div>
 
                 {/* Required Columns */}
-                <div className="component-ui-csv-uploader-columns">
-                    <h4 className="component-ui-csv-uploader-columns-title">Required Columns:</h4>
-                    <div className="component-ui-csv-uploader-columns-grid">
+                <div className="mt-6">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Required Columns:</h4>
+                    <div className="flex flex-wrap gap-2">
                         {requiredColumns.map((col) => (
-                            <span key={col} className="component-ui-csv-uploader-column-badge">
+                            <span key={col} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
                                 {col}
                             </span>
                         ))}
@@ -360,28 +359,30 @@ const CSVUploader: React.FC<CSVUploaderProps> = ({ hotelId, onSuccess }) => {
                 </div>
 
                 {/* Download Template */}
-                <button
-                    className="component-ui-csv-uploader-template-btn"
-                    onClick={() => {
-                        const headers = requiredColumns.join(',');
-                        const sampleData = [
-                            '2025-01-15,Monday,45,10,8,75.5,45000,1000,80,60,2,2,1,5',
-                            '2025-01-16,Tuesday,48,12,7,80.0,48000,1000,90,60,1,1,2,6'
-                        ];
-                        const csvContent = [headers, ...sampleData].join('\n');
-                        const blob = new Blob([csvContent], { type: 'text/csv' });
-                        const url = URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = 'sample_records.csv';
-                        link.click();
-                        URL.revokeObjectURL(url);
-                    }}
-                >
-                    📥 Download Template
-                </button>
+                <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+                    <button
+                        className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            const headers = requiredColumns.join(',');
+                            const sampleData = [
+                                '2025-01-15,Monday,45,10,8,75.5,45000,1000,80,60,2,2,1,5',
+                                '2025-01-16,Tuesday,48,12,7,80.0,48000,1000,90,60,1,1,2,6'
+                            ];
+                            const csvContent = [headers, ...sampleData].join('\n');
+                            const blob = new Blob([csvContent], { type: 'text/csv' });
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.download = 'sample_records.csv';
+                            link.click();
+                            URL.revokeObjectURL(url);
+                        }}
+                    >
+                        📥 Download Template
+                    </button>
+                </div>
             </div>
-
         </div>
     );
 };

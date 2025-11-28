@@ -44,5 +44,8 @@ const ForecastSchema = new Schema<IForecast>({
     timestamps: true
 });
 
+// Add compound index for faster queries by hotel and date
+ForecastSchema.index({ hotelId: 1, date: -1 });
+
 export default model<IForecast>('Forecast', ForecastSchema);
 

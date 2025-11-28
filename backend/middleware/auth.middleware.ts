@@ -29,7 +29,10 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
         }
 
         const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+        if (!token) {
+            throw new AuthError('No token provided', 401);
+        }
+        const decoded = (jwt.verify(token, process.env.JWT_SECRET!) as unknown) as JwtPayload;
 
         // Check if user exists
         const user = await User.findById(decoded.id).select('-password');

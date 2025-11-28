@@ -1,7 +1,6 @@
 // @ts-ignore
 import express from 'express';
 import { uploadFile, deleteFile } from '../controllers/upload.controller';
-import { protect } from '../middleware/auth.middleware';
 
 const router = express.Router();
 
