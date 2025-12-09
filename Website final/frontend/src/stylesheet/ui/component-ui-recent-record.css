@@ -1,0 +1,86 @@
+.component-ui-recent-record-container {
+    width: 100%;
+}
+
+.component-ui-recent-record-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 20px 0;
+}
+
+.component-ui-recent-record-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.component-ui-recent-record-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+.component-ui-recent-record-table thead {
+    background-color: #f9f9f9;
+    border-bottom: 2px solid #e0e0e0;
+    position: sticky;
+    top: 0;
+}
+
+.component-ui-recent-record-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.component-ui-recent-record-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 13px;
+    color: #1a1a1a;
+    white-space: nowrap;
+}
+
+.component-ui-recent-record-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* Scrollbar Styling */
+.component-ui-recent-record-wrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.component-ui-recent-record-wrapper::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+.component-ui-recent-record-wrapper::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0;
+    border-radius: 4px;
+}
+
+.component-ui-recent-record-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #a0a0a0;
+}
+
+@media (max-width: 768px) {
+    .component-ui-recent-record-wrapper {
+        max-height: 400px;
+    }
+
+    .component-ui-recent-record-table th,
+    .component-ui-recent-record-table td {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+}
+

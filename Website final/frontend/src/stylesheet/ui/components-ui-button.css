@@ -1,0 +1,24 @@
+/* src/styles/components-ui-button.css */
+.components-ui-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #1d4ed8;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.components-ui-button:hover {
+    background-color: #2563eb;
+}
+
+@media (max-width: 600px) {
+    .components-ui-button {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+}

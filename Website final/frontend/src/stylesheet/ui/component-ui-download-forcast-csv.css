@@ -1,0 +1,343 @@
+/* Download Forecast CSV Component Styles */
+
+.ui-component-download-forcast-container {
+    width: 100%;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.ui-component-download-forcast-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1a1a1a;
+    margin: 0 0 20px 0;
+}
+
+.ui-component-download-forcast-content {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+/* Calendars Section */
+.ui-component-download-forcast-calendars {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    min-width: 300px;
+}
+
+.ui-component-calendar-wrapper {
+    position: relative;
+}
+
+.ui-component-calendar-label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.ui-component-calendar-label label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.ui-component-date-toggle {
+    padding: 10px 14px;
+    border: 2px solid #e0e0e0;
+    background-color: white;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.ui-component-date-toggle:hover {
+    border-color: #36a2eb;
+    background-color: #f0f7ff;
+}
+
+.ui-component-date-toggle:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.ui-component-calendar-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-top: 8px;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.ui-component-calendar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.ui-component-month {
+    background: white;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+}
+
+.ui-component-month-header {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    text-align: center;
+}
+
+.ui-component-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 6px;
+}
+
+.ui-component-weekday {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    padding: 3px 0;
+}
+
+.ui-component-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.ui-component-day {
+    aspect-ratio: 1;
+    padding: 0;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ui-component-day:hover:not(:disabled) {
+    border-color: #36a2eb;
+    background-color: #f0f7ff;
+}
+
+.ui-component-day:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    border-color: #f0f0f0;
+}
+
+.ui-component-day.ui-component-other-month {
+    color: #ccc;
+    background-color: #fafafa;
+    border-color: #f5f5f5;
+}
+
+.ui-component-day.ui-component-available {
+    color: #1a1a1a;
+    background-color: white;
+    border-color: #d0d0d0;
+}
+
+.ui-component-day.ui-component-in-range {
+    background-color: #e3f2fd;
+    border-color: #36a2eb;
+    color: #1a1a1a;
+}
+
+.ui-component-day.ui-component-selected {
+    background-color: #36a2eb;
+    color: white;
+    border-color: #1976d2;
+    font-weight: 600;
+}
+
+/* Form Section */
+.ui-component-download-forcast-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.ui-component-download-forcast-button {
+    padding: 12px 28px;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    min-width: 160px;
+}
+
+.ui-component-download-forcast-button:hover:not(:disabled) {
+    background-color: #1565c0;
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.ui-component-download-forcast-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.ui-component-download-forcast-error {
+    padding: 12px;
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef5350;
+    border-radius: 4px;
+    font-size: 13px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Info Section */
+.ui-component-download-forcast-info {
+    flex: 1;
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    border-left: 4px solid #1976d2;
+    min-width: 250px;
+}
+
+.ui-component-download-forcast-info-text {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.ui-component-download-forcast-info-dates {
+    margin: 0;
+    font-size: 12px;
+    color: #999;
+    font-style: italic;
+}
+
+/* Loading State */
+.ui-component-download-forcast-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 14px;
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .ui-component-download-forcast-content {
+        flex-direction: column;
+    }
+
+    .ui-component-download-forcast-calendars {
+        width: 100%;
+    }
+
+    .ui-component-download-forcast-form {
+        width: 100%;
+    }
+
+    .ui-component-download-forcast-button {
+        width: 100%;
+    }
+
+    .ui-component-download-forcast-info {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .ui-component-download-forcast-container {
+        padding: 16px;
+        border-radius: 6px;
+    }
+
+    .ui-component-download-forcast-title {
+        font-size: 18px;
+        margin-bottom: 16px;
+    }
+
+    .ui-component-download-forcast-calendars {
+        grid-template-columns: 1fr;
+    }
+
+    .ui-component-calendar-dropdown {
+        max-height: 300px;
+    }
+
+    .ui-component-calendar {
+        grid-template-columns: 1fr;
+    }
+
+    .ui-component-day {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ui-component-download-forcast-container {
+        padding: 12px;
+    }
+
+    .ui-component-download-forcast-title {
+        font-size: 16px;
+    }
+
+    .ui-component-date-toggle {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .ui-component-month-header {
+        font-size: 12px;
+    }
+
+    .ui-component-weekday {
+        font-size: 10px;
+    }
+
+    .ui-component-download-forcast-button {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+}
+

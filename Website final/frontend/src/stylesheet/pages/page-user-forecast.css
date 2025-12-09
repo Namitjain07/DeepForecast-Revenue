@@ -1,0 +1,107 @@
+/* filepath: c:\Btech\Sem 7\Revenue_Prediction_Website\frontend\src\stylesheet\pages\page-user-forecast.css */
+
+.page-user-forecast {
+    padding: 24px;
+    background-color: #f9fafb;
+    min-height: 100vh;
+}
+
+.page-user-forecast-header {
+    margin-bottom: 32px;
+}
+
+.page-user-forecast-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 2rem;
+    color: #111827;
+    font-weight: 700;
+}
+
+.page-user-forecast-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 1rem;
+}
+
+.page-user-forecast-container {
+    display: flex;
+    flex-direction: column;
+    /*grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));*/
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.page-user-forecast-graph-wrapper {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.page-user-forecast-graph-wrapper:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 1440px) {
+    .page-user-forecast-container {
+        grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
+    }
+}
+
+@media (max-width: 1024px) {
+    .page-user-forecast {
+        padding: 16px;
+    }
+
+    .page-user-forecast-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .page-user-forecast-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .page-user-forecast-graph-wrapper {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-user-forecast {
+        padding: 12px;
+    }
+
+    .page-user-forecast-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .page-user-forecast-container {
+        gap: 12px;
+    }
+
+    .page-user-forecast-graph-wrapper {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-user-forecast {
+        padding: 8px;
+    }
+
+    .page-user-forecast-header h1 {
+        font-size: 1.1rem;
+    }
+
+    .page-user-forecast-header p {
+        font-size: 0.9rem;
+    }
+
+    .page-user-forecast-graph-wrapper {
+        padding: 8px;
+    }
+}
+
