@@ -83,7 +83,7 @@ cd frontend
 npm install
 ```
 
-3. Create a `.env` file in the backend directory:
+3. Create a `.env` file in the frontend and backend directory:
 
 
 4. Start the development servers:
@@ -91,11 +91,11 @@ npm install
 # Backend
 cd backend
 npm run dev
+npx ts-node script.ts // Use this cmd to add dummy data in the database
 
 # Frontend
 cd frontend
 npm run dev
-npx ts-node script.ts
 ```
 
 ## User Roles and Permissions
