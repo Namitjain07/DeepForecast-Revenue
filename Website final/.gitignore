@@ -57,6 +57,13 @@ tmp/
 temp/
 lightning_logs/
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
 # Misc
 *.tgz
 *.bak

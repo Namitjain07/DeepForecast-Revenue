@@ -26,7 +26,7 @@ const UserNavbar: React.FC<UserNavbarProps> = ({ role, hotelId }) => {
     const [trainMessage, setTrainMessage] = useState<string | null>(null);
     const [isPolling, setIsPolling] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
-    const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const pollIntervalRef = useRef<number | null>(null);
 
     const handleNavigation = (tab: string, path: string) => {
         setActiveTab(tab);
