@@ -5,11 +5,15 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../redux/store";
 import { logout } from "../../redux/slices/authSlice";
 import { addLastTrainRecord } from "../../redux/services/modelTrainAPI";
+import axios from "axios";
 
 interface UserNavbarProps {
     role: "owner" | "manager";
     hotelId?: string;
 }
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+const getToken = () => localStorage.getItem('token');
 
 const UserNavbar: React.FC<UserNavbarProps> = ({ role, hotelId }) => {
     const navigate = useNavigate();
@@ -20,7 +24,9 @@ const UserNavbar: React.FC<UserNavbarProps> = ({ role, hotelId }) => {
     const [activeTab, setActiveTab] = useState("Dashboard");
     const [showProfileDialog, setShowProfileDialog] = useState(false);
     const [trainMessage, setTrainMessage] = useState<string | null>(null);
+    const [isPolling, setIsPolling] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
+    const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleNavigation = (tab: string, path: string) => {
         setActiveTab(tab);
@@ -46,15 +52,105 @@ const UserNavbar: React.FC<UserNavbarProps> = ({ role, hotelId }) => {
                 // @ts-ignore
                 addLastTrainRecord(user.id, hotelId) as any
             );
-            if (response) {
-                setTrainMessage("✓ Model retraining started successfully!");
-                setTimeout(() => setTrainMessage(null), 3000);
+            if (response && response.train_id) {
+                setTrainMessage("✓ Model retraining started! Checking status...");
+                setIsPolling(true);
+                
+                // Start polling for training completion
+                pollTrainingStatus(response.train_id);
             }
         } catch (error: any) {
             setTrainMessage(`✕ ${error.response?.data?.message || 'Failed to start retraining'}`);
             setTimeout(() => setTrainMessage(null), 3000);
         }
     };
+
+    // Poll training status and refresh page when complete
+    const pollTrainingStatus = async (trainId: string) => {
+        let pollCount = 0;
+        const maxPolls = 60; // Poll for up to 5 minutes (60 * 5 seconds)
+
+        const checkStatus = async () => {
+            try {
+                const response = await axios.get(
+                    `${API_URL}/train/${hotelId}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                );
+
+                const lastTrain = response.data?.lastTrain;
+                
+                if (lastTrain && lastTrain.id === trainId) {
+                    if (lastTrain.status === 'success') {
+                        setTrainMessage("✓ Training completed! Refreshing forecasts...");
+                        setIsPolling(false);
+                        
+                        // Clear interval
+                        if (pollIntervalRef.current) {
+                            clearInterval(pollIntervalRef.current);
+                            pollIntervalRef.current = null;
+                        }
+                        
+                        // Reload page after 2 seconds to fetch new forecasts
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                        return;
+                    } else if (lastTrain.status === 'failure') {
+                        setTrainMessage("✕ Training failed. Please try again.");
+                        setIsPolling(false);
+                        
+                        // Clear interval
+                        if (pollIntervalRef.current) {
+                            clearInterval(pollIntervalRef.current);
+                            pollIntervalRef.current = null;
+                        }
+                        
+                        setTimeout(() => setTrainMessage(null), 5000);
+                        return;
+                    } else if (lastTrain.status === 'running') {
+                        setTrainMessage("⏳ Training in progress... Please wait.");
+                    }
+                }
+
+                pollCount++;
+                
+                // Stop polling after max attempts
+                if (pollCount >= maxPolls) {
+                    setTrainMessage("⚠️ Training is taking longer than expected. Check back later.");
+                    setIsPolling(false);
+                    
+                    if (pollIntervalRef.current) {
+                        clearInterval(pollIntervalRef.current);
+                        pollIntervalRef.current = null;
+                    }
+                    
+                    setTimeout(() => setTrainMessage(null), 5000);
+                }
+            } catch (error) {
+                console.error('Error polling training status:', error);
+            }
+        };
+
+        // Start polling every 5 seconds
+        pollIntervalRef.current = setInterval(checkStatus, 5000);
+        
+        // Do initial check immediately
+        checkStatus();
+    };
+
+    // Cleanup interval on unmount
+    useEffect(() => {
+        return () => {
+            if (pollIntervalRef.current) {
+                clearInterval(pollIntervalRef.current);
+            }
+        };
+    }, []);
 
     // Automatically update active tab when user navigates manually
     useEffect(() => {
@@ -119,18 +215,20 @@ const UserNavbar: React.FC<UserNavbarProps> = ({ role, hotelId }) => {
                         <div className="relative">
                             <button
                                 onClick={handleRetrainModel}
-                                disabled={modelTrain.loading}
+                                disabled={modelTrain.loading || isPolling}
                                 className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white ${
-                                    modelTrain.loading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'
+                                    (modelTrain.loading || isPolling) ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'
                                 } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors`}
-                                title={modelTrain.loading ? "Model is retraining..." : "Click to retrain the model"}
+                                title={(modelTrain.loading || isPolling) ? "Model is retraining..." : "Click to retrain the model"}
                             >
-                                {modelTrain.loading ? "⏳ Retraining..." : "🔄 Retrain Model"}
+                                {(modelTrain.loading || isPolling) ? "⏳ Retraining..." : "🔄 Retrain Model"}
                             </button>
                             
                             {trainMessage && (
                                 <div className={`absolute top-full mt-2 right-0 w-64 p-2 rounded-md text-xs font-medium shadow-lg z-50 ${
-                                    trainMessage.startsWith('✓') ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'
+                                    trainMessage.startsWith('✓') || trainMessage.startsWith('⏳') ? 'bg-green-50 text-green-700 border border-green-200' : 
+                                    trainMessage.startsWith('⚠️') ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' :
+                                    'bg-red-50 text-red-700 border border-red-200'
                                 }`}>
                                     {trainMessage}
                                 </div>
