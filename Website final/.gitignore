@@ -55,6 +55,7 @@ Thumbs.db
 # Logs & temp
 tmp/
 temp/
+lightning_logs/
 
 # Misc
 *.tgz

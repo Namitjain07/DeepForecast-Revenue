@@ -34,6 +34,7 @@ const AdminNavbar: React.FC<NavbarProps> = ({ role }) => {
         if (location.pathname.includes("dashboard")) setActiveTab("Dashboard");
         else if (location.pathname.includes("all-hotels")) setActiveTab("All Hotels");
         else if (location.pathname.includes("add-hotel")) setActiveTab("Add Hotel");
+        else if (location.pathname.includes("admin-user-manager")) setActiveTab("User Manager");
     }, [location.pathname]);
 
     // Close profile dialog when clicking outside
@@ -56,6 +57,7 @@ const AdminNavbar: React.FC<NavbarProps> = ({ role }) => {
         { name: "Dashboard", path: `/${role}-dashboard`, show: true },
         { name: "All Hotels", path: "/all-hotels", show: role === "admin" },
         { name: "Add Hotel", path: "/add-hotel", show: role === "admin" },
+        { name: "User Manager", path: "/admin-user-manager", show: role === "admin" },
     ];
 
     return (

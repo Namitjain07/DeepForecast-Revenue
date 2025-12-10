@@ -51,3 +51,30 @@ export const addNewUser = (userData: {
         throw error;
     }
 };
+
+/**
+ * Add a new admin
+ */
+export const addNewAdmin = (adminData: {
+    name: string;
+    email: string;
+    password: string;
+    imageUrl?: string;
+}) => async (dispatch: Dispatch) => {
+    try {
+        dispatch(addNewUserStart());
+        const response = await axios.post(`${API_URL}/auth/add_admin`, adminData, {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        dispatch(addNewUserSuccess());
+        return response.data;
+    } catch (error: any) {
+        const message = error.response?.data?.message || 'Failed to add admin';
+        dispatch(addNewUserFailure(message));
+        console.error('Add admin error:', message);
+        throw error;
+    }
+};

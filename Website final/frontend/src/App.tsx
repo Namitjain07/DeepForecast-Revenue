@@ -13,6 +13,7 @@ import UserForecast from "./pages/UserForecast.tsx";
 import UserHotelInfo from "./pages/UserHotelInfo.tsx";
 import UserManager from "./pages/UserManager.tsx";
 import UserRecords from "./pages/UserRecords.tsx";
+import AdminUserManager from "./pages/AdminUserManager.tsx";
 import { useAppSelector } from './redux/hooks';
 import { restoreAuthState } from './redux/slices/authSlice';
 import type {JSX} from "react";
@@ -75,6 +76,14 @@ const AppContent = () => {
                     element={
                         <PrivateRoute allowedRoles={['admin']}>
                             <AddHotel />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/admin-user-manager"
+                    element={
+                        <PrivateRoute allowedRoles={['admin']}>
+                            <AdminUserManager />
                         </PrivateRoute>
                     }
                 />

@@ -1,7 +1,7 @@
 // @ts-ignore
 import express from 'express';
 import { login, addUser, addAdmin } from '../controllers/auth.controller';
-import { protect } from '../middleware/auth.middleware';
+import { protect, adminOnly } from '../middleware/auth.middleware';
 import { loginRateLimitMiddleware } from '../security/bruteForceProtection';
 
 const router = express.Router();
@@ -142,6 +142,6 @@ router.post('/add_user', protect, addUser);
  *       403:
  *         description: Unauthorized - Admin access required
  */
-router.post('/add_admin', addAdmin);
+router.post('/add_admin', protect, adminOnly, addAdmin);
 
 export default router;
